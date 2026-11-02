@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerGuard | Expenses</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/CSS/Expense.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+            <div class="logo">
+                <i data-lucide="zap"></i>
+            </div>
+            <div>
+                <h2>PowerGuard</h2>
+                <small>Monitor. Compare. Save.</small>
+            </div>
+        </div>
+
+        <nav class="navigation">
+            <a href="Dashbroad.html">
+                <i data-lucide="house"></i>
+                <span>Overview</span>
+            </a>
+
+            <a href="expense.html" class="active">
+                <i data-lucide="receipt-text"></i>
+                <span>Expenses</span>
+            </a>
+
+            <a href="generator.html">
+                <i data-lucide="zap"></i>
+                <span>Generator</span>
+            </a>
+
+            <a href="battery.html">
+                <i data-lucide="battery-charging"></i>
+                <span>Battery</span>
+            </a>
+
+            <a href="compare.html">
+                <i data-lucide="scale"></i>
+                <span>Compare</span>
+            </a>
+
+            <a href="settings.html">
+                <i data-lucide="settings"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="side-promo">
+            <div class="promo-art">
+                <i data-lucide="leaf"></i>
+                <i data-lucide="plug-zap"></i>
+            </div>
+
+            <h3>Smarter Energy<br>for a Stronger<br>Business</h3>
+
+            <button type="button">
+                Upgrade Plan
+                <i data-lucide="arrow-right"></i>
+            </button>
+        </div>
+
+        <div class="help-card">
+            <i data-lucide="circle-help"></i>
+            <div>
+                <strong>Need Help?</strong>
+                <small>Get support</small>
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN AREA -->
+    <main class="main-area">
+
+        <!-- NAVBAR -->
+        <header class="navbar">
+
+            <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+                <i data-lucide="menu"></i>
+            </button>
+
+            <div class="search-box">
+                <i data-lucide="search"></i>
+                <input type="search" id="searchInput" placeholder="Search anything...">
+            </div>
+
+            <div class="user-area">
+
+                <button class="notification" aria-label="Notifications">
+                    <i data-lucide="bell"></i>
+                    <span></span>
+                </button>
+
+                <!-- Filled from the logged-in user -->
+                <div class="avatar" id="profileAvatar">U</div>
+
+                <div class="user-info">
+                    <strong id="profileName">Your Name</strong>
+                    <small id="profileBusiness">Set up your business</small>
+                </div>
+
+                <i data-lucide="chevron-down" class="chevron"></i>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE CONTENT -->
+        <div class="page-content">
+
+            <!-- PAGE TITLE -->
+            <section class="page-heading">
+
+                <div>
+                    <h1>Expenses</h1>
+                    <p>Track and manage your energy expenses</p>
+                </div>
+
+                <div class="date-filter">
+                    <i data-lucide="calendar-days"></i>
+
+                    <select id="periodFilter" aria-label="Date range">
+                        <option value="30d">Last 30 Days</option>
+                        <option value="7d">Last 7 Days</option>
+                        <option value="90d">Last 90 Days</option>
+                        <option value="all">All Time</option>
+                    </select>
+                </div>
+
+            </section>
+
+
+            <!-- SUMMARY CARDS
+                 data-source = the power source chosen on the Business Setup
+                 page that makes this card appear. -->
+            <section class="summary-cards" id="summaryCards">
+
+                <article class="summary-card">
+                    <div class="summary-icon">
+                        <i data-lucide="wallet"></i>
+                    </div>
+
+                    <div class="summary-details">
+                        <p>Total Expenses</p>
+                        <h2 id="totalExpenses">₦0</h2>
+                        <small id="totalChange" class="no-data">No data yet</small>
+                    </div>
+
+                    <i class="watermark" data-lucide="wallet"></i>
+                </article>
+
+
+                <article class="summary-card" data-source="grid">
+                    <div class="summary-icon">
+                        <i data-lucide="tower-control"></i>
+                    </div>
+
+                    <div class="summary-details">
+                        <p>Grid Electricity</p>
+                        <h2 id="gridTotal">₦0</h2>
+                        <small id="gridPercentage" class="no-data">No data yet</small>
+                    </div>
+
+                    <i class="watermark" data-lucide="zap"></i>
+                </article>
+
+
+                <article class="summary-card" data-source="generator">
+                    <div class="summary-icon">
+                        <i data-lucide="fuel"></i>
+                    </div>
+
+                    <div class="summary-details">
+                        <p>Generator Fuel</p>
+                        <h2 id="generatorTotal">₦0</h2>
+                        <small id="generatorPercentage" class="no-data">No data yet</small>
+                    </div>
+
+                    <i class="watermark" data-lucide="truck"></i>
+                </article>
+
+
+                <article class="summary-card">
+                    <div class="summary-icon">
+                        <i data-lucide="ellipsis"></i>
+                    </div>
+
+                    <div class="summary-details">
+                        <p>Other Expenses</p>
+                        <h2 id="otherTotal">₦0</h2>
+                        <small id="otherPercentage" class="no-data">No data yet</small>
+                    </div>
+
+                    <i class="watermark" data-lucide="circle-ellipsis"></i>
+                </article>
+
+            </section>
+
+
+            <!-- ENTRY SECTION -->
+            <section class="entry-layout">
+
+
+                <!-- RECEIPT UPLOAD -->
+                <div class="receipt-panel">
+
+                    <div class="section-heading">
+                        <span class="heading-icon upload-icon">
+                            <i data-lucide="cloud-upload"></i>
+                        </span>
+
+                        <div>
+                            <h2>Upload Receipt (AI Extraction)</h2>
+                            <p>Upload a receipt and let Gemini extract the information for you.</p>
+                        </div>
+                    </div>
+
+
+                    <div class="receipt-content">
+
+                        <div class="upload-column">
+
+                            <label for="receiptInput" class="upload-box" id="uploadBox">
+
+                                <i data-lucide="file-plus" class="file-icon"></i>
+
+                                <strong id="uploadTitle">
+                                    Drag and drop your receipt here
+                                </strong>
+
+                                <span>or</span>
+
+                                <span class="choose-file">
+                                    <i data-lucide="image"></i>
+                                    Choose File
+                                </span>
+
+                                <small id="fileName">
+                                    Supported formats: JPG, JPEG, PNG
+                                </small>
+
+                            </label>
+
+                            <input
+                                type="file"
+                                id="receiptInput"
+                                accept="image/jpeg,image/png,image/jpg"
+                                hidden
+                            />
+
+                            <button type="button" class="extract-btn" id="extractBtn" hidden>
+                                <i data-lucide="sparkles"></i>
+                                Extract Receipt Information
+                            </button>
+
+                        </div>
+
+
+                        <div class="how-it-works">
+
+                            <h3>How it works:</h3>
+
+                            <div class="step">
+                                <span>1</span>
+                                <p>Upload your receipt</p>
+                            </div>
+
+                            <div class="step">
+                                <span>2</span>
+                                <p>We'll extract the information with Gemini</p>
+                            </div>
+
+                            <div class="step">
+                                <span>3</span>
+                                <p>Review and confirm the details</p>
+                            </div>
+
+                            <div class="tip-box">
+                                <i data-lucide="lightbulb"></i>
+                                <p>Make sure to review the extracted information before saving.</p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MANUAL ENTRY -->
+                <div class="manual-panel">
+
+                    <div class="section-heading">
+
+                        <span class="heading-icon add-icon">
+                            <i data-lucide="plus"></i>
+                        </span>
+
+                        <div>
+                            <h2>Add Expense Manually</h2>
+                            <p>Record your energy expenses in just a few steps.</p>
+                        </div>
+
+                    </div>
+
+
+                    <form id="expenseForm">
+
+                        <div class="form-grid">
+
+                            <div class="form-group">
+                                <label for="category">Category</label>
+
+                                <!-- Options are built by the JS from the
+                                     power sources chosen at setup -->
+                                <select id="category" required></select>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="amount">Amount (₦)</label>
+
+                                <input
+                                    type="number"
+                                    id="amount"
+                                    min="1"
+                                    step="0.01"
+                                    placeholder="Enter amount"
+                                    required
+                                >
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="expenseDate">Date</label>
+
+                                <input
+                                    type="date"
+                                    id="expenseDate"
+                                    required
+                                >
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="description">Description (Optional)</label>
+
+                                <input
+                                    type="text"
+                                    id="description"
+                                    placeholder="Enter description..."
+                                >
+                            </div>
+
+                        </div>
+
+
+                        <button type="submit" class="save-btn" id="saveBtn">
+                            <i data-lucide="save"></i>
+                            Save Expense
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+
+            <!-- EXPENSE HISTORY -->
+            <section class="history-panel">
+
+                <!-- FILTER TABS -->
+                <div class="history-toolbar">
+
+                    <div class="filter-tabs">
+
+                        <button class="filter-tab active" data-filter="All">
+                            <i data-lucide="list"></i>
+                            All Expenses
+                        </button>
+
+                        <button class="filter-tab" data-filter="Grid Electricity" data-source="grid">
+                            <i data-lucide="tower-control"></i>
+                            Grid Electricity
+                        </button>
+
+                        <button class="filter-tab" data-filter="Generator" data-source="generator">
+                            <i data-lucide="fuel"></i>
+                            Generator Fuel
+                        </button>
+
+                        <button class="filter-tab" data-filter="Other">
+                            <i data-lucide="ellipsis"></i>
+                            Other
+                        </button>
+
+                    </div>
+
+                    <button class="history-btn" id="historyBtn">
+                        View Full History
+                        <i data-lucide="arrow-right"></i>
+                    </button>
+
+                </div>
+
+
+                <!-- TABLE (rows are created by the JS from backend data) -->
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Source</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="expenseTable"></tbody>
+
+                    </table>
+
+                    <div class="empty-state" id="emptyState">
+                        <i data-lucide="receipt"></i>
+                        <h3 id="emptyTitle">No expenses yet</h3>
+                        <p id="emptyText">Add your first expense or upload a receipt to get started.</p>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <p class="footer-note">
+                PowerGuard · Smarter energy management for your business.
+            </p>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- NOTIFICATION MESSAGE -->
+<div class="toast" id="toast"></div>
+
+
+<!-- VIEW / EDIT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+
+        <button class="modal-close" id="modalClose" aria-label="Close">
+            <i data-lucide="x"></i>
+        </button>
+
+        <h2 id="modalTitle">Expense Details</h2>
+
+        <div id="modalContent"></div>
+
+        <button class="modal-done" id="modalDone">Close</button>
+
+    </div>
+</div>
+
+
+<script src="/JS/Expense.js"></script>
+
+</body>
+</html>

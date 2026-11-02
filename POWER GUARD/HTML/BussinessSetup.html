@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f3faf4">
+  <title>Business Setup | PowerGuard</title>
+
+  <!-- Same font as the login page -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/CSS/BussinessSetup.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" aria-label="PowerGuard home">
+        <span class="brand-mark"><i data-lucide="zap"></i></span>
+        <span class="brand-copy"><strong>PowerGuard</strong><small>Monitor. Compare. Save.</small></span>
+      </a>
+
+      <nav class="side-nav" aria-label="Main navigation">
+        <a href="#" class="nav-link"><i data-lucide="house"></i><span>Overview</span></a>
+        <a href="#" class="nav-link"><i data-lucide="receipt-text"></i><span>Expenses</span></a>
+        <a href="#" class="nav-link"><i data-lucide="plug-zap"></i><span>Generator</span></a>
+        <a href="#" class="nav-link"><i data-lucide="battery-charging"></i><span>Battery</span></a>
+        <a href="#" class="nav-link"><i data-lucide="scale"></i><span>Compare</span></a>
+        <a href="#" class="nav-link"><i data-lucide="settings"></i><span>Settings</span></a>
+      </nav>
+
+      <div class="sidebar-promo">
+        <div class="promo-art"><i data-lucide="leaf"></i><i data-lucide="zap"></i></div>
+        <h3>Smarter Energy<br>for a Stronger<br>Business</h3>
+        <a href="#" class="promo-button">Upgrade Plan <i data-lucide="arrow-right"></i></a>
+      </div>
+
+      <a href="#" class="help-card">
+        <span class="help-icon"><i data-lucide="circle-help"></i></span>
+        <span><strong>Need Help?</strong><small>Get support</small></span>
+        <i data-lucide="chevron-right" class="help-arrow"></i>
+      </a>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="mobile-menu" id="menuToggle" aria-label="Open navigation"><i data-lucide="menu"></i></button>
+        <label class="search-box">
+          <i data-lucide="search"></i>
+          <input type="search" placeholder="Search anything..." aria-label="Search">
+        </label>
+        <div class="topbar-actions">
+          <button class="icon-button notification-button" aria-label="Notifications">
+            <i data-lucide="bell"></i><span class="notification-dot"></span>
+          </button>
+          <button class="profile-button" aria-label="User profile">
+            <span class="avatar" id="profileAvatar">U</span>
+            <span class="profile-copy"><strong id="profileName">Your Name</strong><small id="profileBusiness">Set up your business</small></span>
+            <i data-lucide="chevron-down"></i>
+          </button>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="page-banner">
+          <div class="banner-copy">
+            <span class="banner-icon"><i data-lucide="briefcase-business"></i></span>
+            <div>
+              <h1>Business Setup</h1>
+              <p>Tell us about your business and the power sources you use.</p>
+            </div>
+          </div>
+          <div class="banner-illustration" aria-hidden="true"></div>
+        </section>
+
+        <form id="businessSetup" novalidate>
+          <section class="setup-card business-card">
+            <div class="section-heading">
+              <span class="step-number">1</span>
+              <div><h2>Business Information</h2><p>Help us understand your business better.</p></div>
+            </div>
+
+            <div class="form-grid">
+              <div class="field">
+                <label for="businessName">Business Name <b>*</b></label>
+                <div class="input-wrap"><i data-lucide="store"></i><input id="businessName" name="businessName" type="text" placeholder="e.g. Victory Salon" required></div>
+                <small class="field-error" id="businessNameError"></small>
+              </div>
+              <div class="field">
+                <label for="businessCategory">Business Category <b>*</b></label>
+                <div class="input-wrap select-wrap"><i data-lucide="layout-grid"></i>
+                  <select id="businessCategory" name="businessCategory" required>
+                    <option value="">Select category</option>
+                    <option>Retail / Supermarket</option><option>Food / Restaurant</option>
+                    <option>Salon / Barbing</option><option>Frozen Foods</option>
+                    <option>Printing / Business Centre</option><option>Healthcare / Pharmacy</option>
+                    <option>POS / Financial Services</option><option>Other</option>
+                  </select>
+                  <i data-lucide="chevron-down" class="select-chevron"></i>
+                </div>
+                <small class="field-error" id="businessCategoryError"></small>
+              </div>
+              <div class="field">
+                <label for="location">Location <span>(Optional)</span></label>
+                <div class="input-wrap"><i data-lucide="map-pin"></i><input id="location" name="location" type="text" placeholder="e.g. Awka, Anambra State"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="setup-card power-card">
+            <div class="section-heading">
+              <span class="step-number">2</span>
+              <div><h2>Power Configuration</h2><p>Select the power sources you use for your business.</p></div>
+            </div>
+
+            <div class="power-grid" role="group" aria-label="Select your business power sources">
+              <button class="power-option" type="button" data-source="grid" aria-pressed="false">
+                <span class="selection-indicator"><i data-lucide="check"></i></span>
+                <span class="power-icon"><i data-lucide="utility-pole"></i></span>
+                <strong>Grid Electricity</strong>
+                <small>Public power supply<br>(PHCN)</small>
+              </button>
+              <button class="power-option" type="button" data-source="generator" aria-pressed="false">
+                <span class="selection-indicator"><i data-lucide="check"></i></span>
+                <span class="power-icon"><i data-lucide="plug-zap"></i></span>
+                <strong>Generator</strong>
+                <small>Petrol or Diesel Generator</small>
+              </button>
+              <button class="power-option" type="button" data-source="battery" aria-pressed="false">
+                <span class="selection-indicator"><i data-lucide="check"></i></span>
+                <span class="power-icon"><i data-lucide="battery-charging"></i></span>
+                <strong>Inverter / Battery</strong>
+                <small>Inverter with battery backup</small>
+              </button>
+            </div>
+            <p class="field-error power-error" id="powerError"></p>
+
+            <div class="info-callout">
+              <span class="bulb-icon"><i data-lucide="lightbulb"></i></span>
+              <div><strong>Why this information?</strong><p>This helps us provide accurate cost estimates, comparisons and personalized insights for your business.</p></div>
+            </div>
+          </section>
+
+          <div class="form-actions">
+            <button type="button" class="back-button" id="backButton"><i data-lucide="arrow-left"></i> Back</button>
+            <button type="submit" class="continue-button">Continue <i data-lucide="arrow-right"></i></button>
+          </div>
+          <p class="form-note">You can update your business information and power sources later in Settings.</p>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/JS/BussinessSetup.js"></script>
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerGuard | Login</title>
+
+    <!-- Fonts must load BEFORE style.css is applied -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/CSS/index.css">
+</head>
+
+<body>
+
+    <!-- =========================================================
+         SVG ICON SPRITE (replaces the unicode symbols)
+         Use anywhere with: <svg class="icon"><use href="#i-name"/></svg>
+    ========================================================== -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+
+        <!-- Brand logo (filled, uses its own gradient) -->
+        <symbol id="i-logo" viewBox="0 0 64 64">
+            <defs>
+                <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#6BE07F"/>
+                    <stop offset="1" stop-color="#0A7A3C"/>
+                </linearGradient>
+            </defs>
+            <path fill="url(#logoGrad)"
+                d="M34 2C52 6 62 22 56 40 51 54 36 62 20 58 8 54 2 42 6 30 10 18 20 8 34 2Z"/>
+            <path fill="#0B5D31" d="M38 9 20 36h11l-5 19 20-29H34z"/>
+            <path fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2"
+                stroke-linecap="round" d="M12 20C16 13 22 9 28 6"/>
+        </symbol>
+
+        <!-- Stroke icons (inherit colour via currentColor) -->
+        <symbol id="i-chart" viewBox="0 0 24 24">
+            <path d="M3 21h18"/><rect x="5" y="12" width="3.5" height="7" rx=".6"/>
+            <rect x="10.2" y="8" width="3.5" height="11" rx=".6"/>
+            <rect x="15.5" y="11" width="3.5" height="8" rx=".6"/>
+            <path d="m6 8 4-4 3 2 5-4M15 2h3v3"/>
+        </symbol>
+        <symbol id="i-calc" viewBox="0 0 24 24">
+            <rect x="4" y="2.5" width="16" height="19" rx="2.5"/>
+            <path d="M8 6.5h8"/>
+            <path d="M8.5 11h.01M12 11h.01M15.5 11h.01M8.5 14.5h.01M12 14.5h.01M15.5 14.5h.01M8.5 18h.01M12 18h.01M15.5 18h.01" stroke-width="2.4"/>
+        </symbol>
+        <symbol id="i-scale" viewBox="0 0 24 24">
+            <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+            <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+            <path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
+        </symbol>
+        <symbol id="i-bolt" viewBox="0 0 24 24">
+            <path d="M13.5 2 4.5 14H11l-1 8 9-12h-6.5z" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-leaf" viewBox="0 0 24 24">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+        </symbol>
+        <symbol id="i-user" viewBox="0 0 24 24">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </symbol>
+        <symbol id="i-user-plus" viewBox="0 0 24 24">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+            <path d="M19 8v6M22 11h-6"/>
+        </symbol>
+        <symbol id="i-mail" viewBox="0 0 24 24">
+            <rect x="2" y="4" width="20" height="16" rx="2.5"/>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+        </symbol>
+        <symbol id="i-lock" viewBox="0 0 24 24">
+            <rect x="3.5" y="11" width="17" height="10.5" rx="2.5"/>
+            <path d="M7.5 11V7.5a4.5 4.5 0 0 1 9 0V11"/>
+            <path d="M12 15.5v2" stroke-width="2"/>
+        </symbol>
+        <symbol id="i-eye" viewBox="0 0 24 24">
+            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>
+        </symbol>
+        <symbol id="i-eye-off" viewBox="0 0 24 24">
+            <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/>
+            <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
+            <path d="M6.61 6.61A13.53 13.53 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/>
+            <path d="m2 2 20 20"/>
+        </symbol>
+        <symbol id="i-login" viewBox="0 0 24 24">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/>
+        </symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24">
+            <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+        </symbol>
+        <symbol id="i-shield" viewBox="0 0 24 24">
+            <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+            <path d="m9 12 2 2 4-4"/>
+        </symbol>
+
+        <!-- Brand logos (filled) -->
+        <symbol id="i-google" viewBox="0 0 48 48">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.72 7.18l7.19 5.58c4.2-3.88 6.57-9.58 6.57-17.23z"/>
+            <path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 0 1 9.75 24c0-1.6.28-3.14.78-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.86.92 7.52 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.78l-7.19-5.58c-1.99 1.34-4.53 2.13-8.71 2.13-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 43.62 14.62 48 24 48z"/>
+        </symbol>
+    </svg>
+
+
+    <main class="auth-container">
+
+        <!-- =====================  LEFT: HERO  ===================== -->
+        <section class="hero-section">
+
+            <a href="#" class="brand" aria-label="PowerGuard home">
+                <svg class="brand-icon"><use href="#i-logo"/></svg>
+                <div>
+                    <h1>PowerGuard</h1>
+                    <p>Monitor. Compare. Save.</p>
+                </div>
+            </a>
+
+            <div class="hero-content">
+
+                <h2>
+                    Take Control of Your
+                    <span>Business Energy Costs.</span>
+                </h2>
+
+                <p class="hero-description">
+                    Track your electricity expenses, estimate backup
+                    power costs and make smarter energy decisions
+                    with PowerGuard.
+                </p>
+
+                <div class="features">
+
+                    <div class="feature">
+                        <div class="feature-icon"><svg class="icon"><use href="#i-chart"/></svg></div>
+                        <div>
+                            <h3>Track Expenses</h3>
+                            <p>Keep records of your energy spending</p>
+                        </div>
+                    </div>
+
+                    <div class="feature">
+                        <div class="feature-icon"><svg class="icon"><use href="#i-calc"/></svg></div>
+                        <div>
+                            <h3>Estimate Costs</h3>
+                            <p>Know your generator and battery costs</p>
+                        </div>
+                    </div>
+
+                    <div class="feature">
+                        <div class="feature-icon"><svg class="icon"><use href="#i-scale"/></svg></div>
+                        <div>
+                            <h3>Compare Options</h3>
+                            <p>Find the most economical power solution</p>
+                        </div>
+                    </div>
+
+                    <div class="feature">
+                        <div class="feature-icon"><svg class="icon"><use href="#i-bolt"/></svg></div>
+                        <div>
+                            <h3>Powered by AI</h3>
+                            <p>Extract receipt info with Gemini</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="hero-banner">
+                    <svg class="icon banner-icon"><use href="#i-leaf"/></svg>
+                    <span class="banner-divider"></span>
+                    <p>
+                        Smarter Energy Decisions<br>
+                        for a More Productive Business
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Illustration: crop the shop + generator + tower from your
+                 reference image and save it as hero-illustration.png.
+                 If the file is missing, it simply hides itself. -->
+            <img class="hero-illustration"
+                 src="hero-illustration.png"
+                 alt=""
+                 onerror="this.style.display='none'">
+
+        </section>
+
+
+        <!-- =====================  RIGHT: FORM  ===================== -->
+        <section class="form-section">
+
+            <div class="auth-card">
+
+                <a href="#" class="mobile-brand" aria-label="PowerGuard home">
+                    <svg class="brand-icon"><use href="#i-logo"/></svg>
+                    <h1>PowerGuard</h1>
+                </a>
+
+                <div class="form-logo">
+                    <svg class="brand-icon"><use href="#i-logo"/></svg>
+                    <div>
+                        <h1>PowerGuard</h1>
+                        <p>Monitor. Compare. Save.</p>
+                    </div>
+                </div>
+
+
+                <!-- AUTH TABS -->
+                <div class="auth-tabs" role="tablist">
+                    <button class="tab active" id="loginTab" type="button" role="tab">
+                        <svg class="icon"><use href="#i-user"/></svg> Log In
+                    </button>
+                    <button class="tab" id="signupTab" type="button" role="tab">
+                        <svg class="icon"><use href="#i-user-plus"/></svg> Create Account
+                    </button>
+                </div>
+
+
+                <!-- LOGIN FORM -->
+                <div id="loginForm" class="form-content">
+
+                    <div class="form-heading">
+                        <h2>Welcome Back!</h2>
+                        <p>Sign in to access your PowerGuard dashboard</p>
+                    </div>
+
+                    <form id="login">
+
+                        <div class="input-group">
+                            <label for="loginEmail" class="sr-only">Email Address</label>
+                            <div class="field">
+                                <svg class="icon field-icon"><use href="#i-mail"/></svg>
+                                <input type="email" id="loginEmail" placeholder="Email Address" required>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="loginPassword" class="sr-only">Password</label>
+                            <div class="field">
+                                <svg class="icon field-icon"><use href="#i-lock"/></svg>
+                                <input type="password" id="loginPassword" placeholder="Password" required>
+                                <button type="button" class="toggle-password"
+                                        data-target="loginPassword" aria-label="Show password">
+                                    <svg class="icon"><use href="#i-eye"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-options">
+                            <label class="remember">
+                                <input type="checkbox" id="rememberMe">
+                                <span>Remember me</span>
+                            </label>
+                            <a href="#" id="forgotPassword">Forgot <u>Password?</u></a>
+                        </div>
+
+                        <button type="submit" class="primary-btn">
+                            <svg class="icon"><use href="#i-login"/></svg> Log In
+                        </button>
+
+                    </form>
+                </div>
+
+
+                <!-- SIGN UP FORM -->
+                <div id="signupForm" class="form-content hidden">
+
+                    <div class="form-heading">
+                        <h2>Create Your Account</h2>
+                        <p>Start managing your business energy costs</p>
+                    </div>
+
+                    <form id="signup">
+
+                        <div class="input-group">
+                            <label for="fullName" class="sr-only">Full Name</label>
+                            <div class="field">
+                                <svg class="icon field-icon"><use href="#i-user"/></svg>
+                                <input type="text" id="fullName" placeholder="Full Name" required>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="signupEmail" class="sr-only">Email Address</label>
+                            <div class="field">
+                                <svg class="icon field-icon"><use href="#i-mail"/></svg>
+                                <input type="email" id="signupEmail" placeholder="Email Address" required>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="signupPassword" class="sr-only">Password</label>
+                            <div class="field">
+                                <svg class="icon field-icon"><use href="#i-lock"/></svg>
+                                <input type="password" id="signupPassword" placeholder="Create a password"
+                                       minlength="8" required>
+                                <button type="button" class="toggle-password"
+                                        data-target="signupPassword" aria-label="Show password">
+                                    <svg class="icon"><use href="#i-eye"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="confirmPassword" class="sr-only">Confirm Password</label>
+                            <div class="field">
+                                <svg class="icon field-icon"><use href="#i-lock"/></svg>
+                                <input type="password" id="confirmPassword" placeholder="Confirm Password"
+                                       minlength="8" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="primary-btn">
+                            <svg class="icon"><use href="#i-user-plus"/></svg> Create Account
+                        </button>
+
+                    </form>
+                </div>
+
+
+                <!-- DIVIDER -->
+                <div class="divider"><p>or continue with</p></div>
+
+
+                <!-- SOCIAL SIGN IN -->
+                <div class="social-row">
+                    <button type="button" class="social-btn" id="googleLogin">
+                        <svg class="brand-svg"><use href="#i-google"/></svg>
+                        Continue with Google
+                    </button>
+                </div>
+
+
+                <div class="account-prompt">
+                    <span id="promptText">Don't have an account?</span>
+                    <button type="button" id="createLink">
+                        <span id="promptAction">Create Account</span>
+                        <svg class="icon"><use href="#i-arrow"/></svg>
+                    </button>
+                </div>
+
+
+                <!-- SECURITY FOOTER -->
+                <div class="security-footer">
+                    <span><svg class="icon"><use href="#i-shield"/></svg> Secure &amp; Encrypted</span>
+                    <span><svg class="icon"><use href="#i-bolt"/></svg> Fast Access</span>
+                    <span><svg class="icon"><use href="#i-leaf"/></svg> Built for Nigeria</span>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="/JS/index.js"></script>
+
+</body>
+</html>

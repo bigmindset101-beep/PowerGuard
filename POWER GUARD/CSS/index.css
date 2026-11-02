@@ -1,0 +1,818 @@
+/* =========================
+   1. GLOBAL STYLES
+========================= */
+
+:root {
+    --primary: #0E8A3E;
+    --primary-dark: #0B5D31;
+    --primary-deep: #0A5A30;
+    --primary-light: #E3F5E8;
+    --background: #F2FAF4;
+    --white: #FFFFFF;
+    --text: #0B2A1C;
+    --heading: #0B3B24;
+    --secondary: #5B6B61;
+    --border: #D5DCD8;
+
+    --radius-field: 22px;
+    --font: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: var(--font);
+    color: var(--text);
+    background: var(--background);
+    -webkit-font-smoothing: antialiased;
+}
+
+button, input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* SVG icon helpers */
+.icon {
+    width: 1.25em;
+    height: 1.25em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+
+/* =========================
+   2. MAIN LAYOUT
+========================= */
+
+.auth-container {
+    height: 100vh;
+    min-height: 680px;
+    display: grid;
+    grid-template-columns: 58fr 42fr;
+    overflow: hidden;
+}
+
+
+/* =========================
+   3. LEFT HERO SECTION
+========================= */
+
+.hero-section {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 3.5vh 3.6vw 3.5vh;
+    background:
+        radial-gradient(ellipse 70% 60% at 95% 100%, #CFEFD6 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 100% 0%, #D9F3DF 0%, transparent 70%),
+        linear-gradient(135deg, #F4FBF6, #E7F6EA);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: fit-content;
+    color: var(--text);
+    position: relative;
+    z-index: 3;
+}
+
+.brand-icon {
+    width: 70px;
+    height: 70px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 4px 6px rgba(10, 90, 48, 0.18));
+}
+
+.brand h1 {
+    font-size: clamp(28px, 2.5vw, 44px);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    color: var(--heading);
+}
+
+.brand p {
+    font-size: clamp(14px, 1.15vw, 20px);
+    font-weight: 500;
+    margin-top: 4px;
+    color: #1F3328;
+}
+
+.hero-content {
+    margin-top: 5.5vh;
+    position: relative;
+    z-index: 3;
+}
+
+.hero-content h2 {
+    font-size: clamp(34px, 3.75vw, 66px);
+    line-height: 1.07;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    color: var(--heading);
+}
+
+.hero-content h2 span {
+    display: block;
+    color: var(--primary);
+    white-space: nowrap;
+}
+
+.hero-description {
+    font-size: clamp(15px, 1.35vw, 23px);
+    line-height: 1.5;
+    font-weight: 500;
+    color: #1E2F25;
+    max-width: 34em;
+    margin-top: 3vh;
+}
+
+
+/* =========================
+   4. FEATURES
+========================= */
+
+.features {
+    margin-top: 3.5vh;
+    display: flex;
+    flex-direction: column;
+    gap: 1.6vh;
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.feature-icon {
+    width: clamp(46px, 3.8vw, 64px);
+    height: clamp(46px, 3.8vw, 64px);
+    min-width: clamp(46px, 3.8vw, 64px);
+    background: #D9F0DE;
+    color: var(--primary-dark);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+}
+
+.feature-icon .icon {
+    width: 52%;
+    height: 52%;
+    stroke-width: 1.7;
+}
+
+.feature h3 {
+    font-size: clamp(15px, 1.2vw, 20px);
+    font-weight: 700;
+    color: var(--text);
+}
+
+.feature p {
+    font-size: clamp(12px, 0.95vw, 16px);
+    font-weight: 500;
+    color: #2C3C33;
+    margin-top: 3px;
+}
+
+
+/* =========================
+   5. HERO BANNER + ILLUSTRATION
+========================= */
+
+.hero-banner {
+    margin-top: 3.2vh;
+    background: linear-gradient(110deg, #0A5A30, #0F6E3C);
+    color: white;
+    padding: 1.9vh 28px;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    border-radius: 26px;
+    width: fit-content;
+    max-width: 100%;
+    box-shadow: 0 8px 20px rgba(10, 90, 48, 0.22);
+}
+
+.banner-icon {
+    width: 40px;
+    height: 40px;
+    stroke-width: 1.5;
+    fill: rgba(255, 255, 255, 0.12);
+}
+
+.banner-divider {
+    width: 1.5px;
+    align-self: stretch;
+    background: rgba(255, 255, 255, 0.55);
+}
+
+.hero-banner p {
+    font-size: clamp(14px, 1.2vw, 20px);
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.hero-illustration {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 62%;
+    max-height: 78%;
+    object-fit: contain;
+    object-position: right bottom;
+    z-index: 1;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 22%);
+            mask-image: linear-gradient(to right, transparent 0%, #000 22%);
+}
+
+
+/* =========================
+   6. RIGHT FORM SECTION
+========================= */
+
+.form-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2vh 1vw 2vh 0.4vw;
+    background: linear-gradient(135deg, #E9F7EC, #F3FBF5);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 700px;
+    max-height: 100%;
+    overflow-y: auto;
+    background: var(--white);
+    padding: 3vh clamp(24px, 2.4vw, 42px) 2.6vh;
+    border-radius: 28px;
+    box-shadow: 0 14px 40px rgba(21, 80, 44, 0.10);
+    scrollbar-width: thin;
+}
+
+
+/* =========================
+   7. FORM BRANDING
+========================= */
+
+.form-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 2.6vh;
+}
+
+.form-logo h1 {
+    font-size: clamp(30px, 2.8vw, 48px);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    color: var(--heading);
+}
+
+.form-logo p {
+    font-size: clamp(14px, 1.15vw, 20px);
+    font-weight: 500;
+    margin-top: 4px;
+    color: #1F3328;
+}
+
+.mobile-brand {
+    display: none;
+}
+
+
+/* =========================
+   8. LOGIN / SIGNUP TABS
+========================= */
+
+.auth-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: #F1F4F2;
+    border-radius: 10px 10px 0 0;
+    margin-bottom: 2.6vh;
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: none;
+    padding: 1.9vh 8px;
+    background: transparent;
+    color: #4C5A51;
+    font-size: clamp(14px, 1.1vw, 18px);
+    font-weight: 600;
+    border-bottom: 3px solid transparent;
+    transition: background 0.2s, color 0.2s;
+}
+
+.tab .icon {
+    width: 1.5em;
+    height: 1.5em;
+}
+
+.tab.active {
+    background: #E7F5EA;
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.tab.active .icon {
+    fill: currentColor;
+    stroke: currentColor;
+}
+
+
+/* =========================
+   9. FORM HEADINGS
+========================= */
+
+.form-heading {
+    text-align: center;
+    margin-bottom: 2.6vh;
+}
+
+.form-heading h2 {
+    font-size: clamp(26px, 2.35vw, 40px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #0A1A3A;
+}
+
+.form-heading p {
+    font-size: clamp(13px, 1.05vw, 18px);
+    font-weight: 500;
+    color: #1F2D26;
+    margin-top: 8px;
+}
+
+
+/* =========================
+   10. INPUT FIELDS
+========================= */
+
+.input-group {
+    margin-bottom: 1.9vh;
+}
+
+.field {
+    position: relative;
+}
+
+.field input {
+    width: 100%;
+    height: clamp(50px, 6.6vh, 66px);
+    padding: 0 20px 0 clamp(52px, 4vw, 66px);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-field);
+    background: #FFFFFF;
+    outline: none;
+    font-size: clamp(14px, 1.15vw, 19px);
+    font-weight: 500;
+    color: var(--text);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(14, 138, 62, 0.10);
+}
+
+.field input::placeholder {
+    color: #8A958E;
+    font-weight: 500;
+}
+
+.field-icon {
+    position: absolute;
+    left: clamp(16px, 1.5vw, 24px);
+    top: 50%;
+    transform: translateY(-50%);
+    width: clamp(20px, 1.6vw, 28px);
+    height: clamp(20px, 1.6vw, 28px);
+    color: #26352C;
+    stroke-width: 1.9;
+    pointer-events: none;
+}
+
+.field:focus-within .field-icon {
+    color: var(--primary);
+}
+
+.field:has(.toggle-password) input {
+    padding-right: 58px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: grid;
+    place-items: center;
+    border: none;
+    background: none;
+    color: #26352C;
+    padding: 4px;
+}
+
+.toggle-password .icon {
+    width: clamp(20px, 1.6vw, 28px);
+    height: clamp(20px, 1.6vw, 28px);
+    stroke-width: 1.9;
+}
+
+
+/* =========================
+   11. FORM OPTIONS
+========================= */
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin: 0.4vh 0 2.4vh;
+    font-size: clamp(13px, 1.05vw, 18px);
+    font-weight: 500;
+}
+
+.remember {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.remember input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid #5A665F;
+    border-radius: 6px;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+}
+
+.remember input:checked {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.remember input:checked::after {
+    content: "";
+    width: 6px;
+    height: 11px;
+    border: solid #fff;
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg) translate(-1px, -1px);
+}
+
+.form-options a {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.form-options a u {
+    text-underline-offset: 3px;
+}
+
+
+/* =========================
+   12. PRIMARY BUTTON
+========================= */
+
+.primary-btn {
+    width: 100%;
+    height: clamp(52px, 7vh, 68px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    background: var(--primary-deep);
+    border: none;
+    border-radius: 999px;
+    color: white;
+    font-size: clamp(16px, 1.4vw, 23px);
+    font-weight: 600;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.primary-btn .icon {
+    width: 1.35em;
+    height: 1.35em;
+    stroke-width: 1.8;
+}
+
+.primary-btn:hover {
+    background: #07482A;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(10, 90, 48, 0.28);
+}
+
+
+/* =========================
+   13. DIVIDER
+========================= */
+
+.divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2.4vh 0 1.8vh;
+    position: relative;
+}
+
+.divider::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: var(--border);
+}
+
+.divider p {
+    position: relative;
+    background: #fff;
+    padding: 0 14px;
+    font-size: clamp(12px, 1vw, 17px);
+    font-weight: 500;
+    color: #1F2D26;
+}
+
+
+/* =========================
+   14. SOCIAL BUTTONS
+========================= */
+
+.social-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+}
+
+.social-btn {
+    height: clamp(48px, 6.4vh, 64px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 0 10px;
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-field);
+    color: #1B2A22;
+    font-size: clamp(12px, 1.05vw, 18px);
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.social-btn:hover {
+    background: #F5FAF6;
+    border-color: var(--primary);
+}
+
+.brand-svg {
+    width: clamp(20px, 1.7vw, 30px);
+    height: clamp(20px, 1.7vw, 30px);
+    flex-shrink: 0;
+}
+
+
+/* =========================
+   15. ACCOUNT PROMPT
+========================= */
+
+.account-prompt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    text-align: center;
+    font-size: clamp(13px, 1.1vw, 19px);
+    font-weight: 500;
+    margin-top: 2.4vh;
+    color: #14231B;
+}
+
+.account-prompt button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.account-prompt button .icon {
+    width: 1.15em;
+    height: 1.15em;
+    stroke-width: 2.2;
+}
+
+
+/* =========================
+   16. SECURITY FOOTER
+========================= */
+
+.security-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2.2vh;
+}
+
+.security-footer span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 clamp(10px, 1.3vw, 22px);
+    font-size: clamp(10px, 0.85vw, 14px);
+    font-weight: 500;
+    color: #1F2D26;
+    white-space: nowrap;
+}
+
+.security-footer span + span {
+    border-left: 1.5px solid #3A463F;
+}
+
+.security-footer .icon {
+    width: 1.9em;
+    height: 1.9em;
+    color: var(--primary-dark);
+    stroke-width: 1.6;
+}
+
+.security-footer .icon use[href="#i-bolt"] {
+    fill: currentColor;
+}
+
+
+/* =========================
+   17. JAVASCRIPT STATES
+========================= */
+
+.hidden {
+    display: none;
+}
+
+
+/* =========================
+   18. RESPONSIVENESS
+========================= */
+
+/* Short laptop screens: tighten vertical rhythm */
+@media (max-height: 780px) {
+    .brand-icon { width: 56px; height: 56px; }
+    .hero-content { margin-top: 3.5vh; }
+    .features { gap: 1.2vh; }
+    .feature-icon { width: 44px; height: 44px; min-width: 44px; }
+    .form-logo .brand-icon { width: 54px; height: 54px; }
+}
+
+@media (max-width: 1000px) {
+
+    .auth-container {
+        grid-template-columns: 0.9fr 1.1fr;
+    }
+
+    .hero-section {
+        padding: 3vh 4vw;
+    }
+
+    .hero-content h2 span {
+        white-space: normal;
+    }
+
+    .hero-illustration {
+        width: 85%;
+        opacity: 0.55;
+    }
+
+    .social-row {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 760px) {
+
+    .auth-container {
+        display: block;
+        height: auto;
+    }
+
+    .hero-section {
+        display: none;
+    }
+
+    .form-section {
+        min-height: 100vh;
+        padding: 25px 16px;
+    }
+
+    .auth-card {
+        max-width: 480px;
+        max-height: none;
+        padding: 28px 20px;
+    }
+
+    .form-logo {
+        display: none;
+    }
+
+    .mobile-brand {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        color: var(--text);
+        margin-bottom: 26px;
+    }
+
+    .mobile-brand .brand-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .mobile-brand h1 {
+        font-size: 26px;
+        font-weight: 700;
+        letter-spacing: -0.04em;
+        color: var(--heading);
+    }
+
+    .field input,
+    .social-btn,
+    .primary-btn {
+        height: 54px;
+    }
+
+    .form-heading h2 {
+        font-size: 24px;
+    }
+
+}
+
+@media (max-width: 400px) {
+
+    .auth-card {
+        padding: 22px 14px;
+    }
+
+    .form-options {
+        font-size: 12px;
+    }
+
+    .security-footer span {
+        font-size: 9px;
+        padding: 0 6px;
+    }
+
+}
