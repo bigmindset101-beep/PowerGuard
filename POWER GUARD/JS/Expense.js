@@ -1,15 +1,36 @@
-
 /* =================================
    POWERGUARD EXPENSES JAVASCRIPT
-================================= */
+=================================
 
-// ELEMENTS
+   HOW THIS PAGE WORKS
+   1. loadExpenses() asks the backend for the user's expenses.
+   2. A new user has none, so the page shows empty states (₦0, "No data yet").
+   3. Categories, summary cards and filter tabs only appear for the power
+      sources the user chose on the Business Setup page.
+   4. Add / edit / delete / receipt-extract all go through the `api` object
+      in section 4. That is the ONLY place the backend developer edits.
+      The request and response formats are in EXPENSES_API.md.
+
+   Until API_BASE_URL is filled in, the page runs in LOCAL MODE: you can
+   add, edit and delete expenses to test the design, but they live only in
+   memory and disappear when the page is refreshed.
+*/
+
+
+// =================================
+// 1. SETTINGS & ELEMENTS
+// =================================
+
+const API_BASE_URL = "";                 // e.g. "https://api.powerguard.com"
+const USE_BACKEND = API_BASE_URL !== "";
+const ROWS_BEFORE_FULL_HISTORY = 10;
 
 const sidebar = document.getElementById("sidebar");
 const menuBtn = document.getElementById("menuBtn");
 
 const expenseForm = document.getElementById("expenseForm");
 const expenseTable = document.getElementById("expenseTable");
+const saveBtn = document.getElementById("saveBtn");
 
 const amountInput = document.getElementById("amount");
 const categoryInput = document.getElementById("category");
@@ -27,57 +48,37 @@ const toast = document.getElementById("toast");
 const modalOverlay = document.getElementById("modalOverlay");
 const modalTitle = document.getElementById("modalTitle");
 const modalContent = document.getElementById("modalContent");
-
 const modalClose = document.getElementById("modalClose");
 const modalDone = document.getElementById("modalDone");
 
 const emptyState = document.getElementById("emptyState");
+const periodFilter = document.getElementById("periodFilter");
+const searchInput = document.getElementById("searchInput");
 
-
-// INITIAL SAMPLE EXPENSES
-
-let expenses = [
-    {
-        id: 1,
-        date: "2025-10-28",
-        description: "Fuel purchase (10L)",
-        category: "Generator",
-        amount: 15000,
-        source: "Measured"
-    },
-
-    {
-        id: 2,
-        date: "2025-10-26",
-        description: "Electricity Bill",
-        category: "Grid Electricity",
-        amount: 8500,
-        source: "Confirmed"
-    },
-
-    {
-        id: 3,
-        date: "2025-10-24",
-        description: "Fuel purchase",
-        category: "Generator",
-        amount: 10000,
-        source: "Confirmed"
-    }
-];
+// Page state
+let data = {
+    user: null,
+    business: { powerSources: [] },
+    summary: { totalAmount: 0, changePercent: null, gridAmount: 0, generatorAmount: 0, otherAmount: 0 },
+    expenses: []
+};
 
 let activeFilter = "All";
+let searchQuery = "";
+let showFullHistory = false;
 let editingId = null;
 let selectedReceipt = null;
+let receiptId = null;                    // set after a receipt is extracted
+let saving = false;
 
 
-// HELPER FUNCTIONS
+// =================================
+// 2. HELPERS
+// =================================
 
 function formatCurrency(amount) {
-
-    return "₦" + Number(amount).toLocaleString("en-NG");
-
+    return "₦" + Number(amount || 0).toLocaleString("en-NG");
 }
-
 
 function formatDate(date) {
 
@@ -91,18 +92,22 @@ function formatDate(date) {
 
 }
 
+function escapeHTML(value) {
+
+    return String(value ?? "").replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+    }[c]));
+
+}
 
 function showToast(message) {
 
     toast.textContent = message;
     toast.classList.add("show");
 
-    setTimeout(() => {
-        toast.classList.remove("show");
-    }, 2800);
+    setTimeout(() => toast.classList.remove("show"), 2800);
 
 }
-
 
 function refreshIcons() {
 
@@ -112,148 +117,401 @@ function refreshIcons() {
 
 }
 
-
-// MOBILE SIDEBAR
-
-menuBtn.addEventListener("click", () => {
-
-    sidebar.classList.toggle("open");
-
-});
+function today() {
+    return new Date().toISOString().split("T")[0];
+}
 
 
-document.addEventListener("click", (event) => {
+// =================================
+// 3. USER PROFILE (name + initials)
+// =================================
 
-    if (
-        window.innerWidth <= 760 &&
-        sidebar.classList.contains("open") &&
-        !sidebar.contains(event.target) &&
-        !menuBtn.contains(event.target)
-    ) {
+// TEMPORARY: the login page saves the signed-up name in the browser.
+// The backend can send the user inside the response (data.user) instead;
+// that is used first when it exists.
 
-        sidebar.classList.remove("open");
+function getSavedUser() {
 
+    try {
+        return JSON.parse(localStorage.getItem("powerguardUser") || "null");
+    } catch (error) {
+        return null;
     }
 
-});
+}
 
+function getSavedSetup() {
 
-// UPDATE SUMMARY CARDS
-
-function updateSummary() {
-
-    const total = expenses.reduce(
-        (sum, expense) => sum + expense.amount, 0
-    );
-
-    const grid = expenses
-        .filter(e => e.category === "Grid Electricity")
-        .reduce((sum, e) => sum + e.amount, 0);
-
-    const generator = expenses
-        .filter(e => e.category === "Generator")
-        .reduce((sum, e) => sum + e.amount, 0);
-
-    const other = expenses
-        .filter(e => e.category === "Other")
-        .reduce((sum, e) => sum + e.amount, 0);
-
-
-    document.getElementById("totalExpenses").textContent =
-        formatCurrency(total);
-
-    document.getElementById("gridTotal").textContent =
-        formatCurrency(grid);
-
-    document.getElementById("generatorTotal").textContent =
-        formatCurrency(generator);
-
-    document.getElementById("otherTotal").textContent =
-        formatCurrency(other);
-
-
-    function percentage(value) {
-
-        return total > 0
-            ? Math.round((value / total) * 100)
-            : 0;
-
+    try {
+        return JSON.parse(sessionStorage.getItem("powerguardBusinessSetup") || "null");
+    } catch (error) {
+        return null;
     }
 
+}
 
-    document.getElementById("gridPercentage").textContent =
-        percentage(grid) + "% of total";
+// "John Doe" -> "JD"   "Mary Ann Smith" -> "MS"   "Victory" -> "V"
+function getInitials(fullName) {
 
-    document.getElementById("generatorPercentage").textContent =
-        percentage(generator) + "% of total";
+    const parts = fullName.trim().split(/\s+/).filter(Boolean);
 
-    document.getElementById("otherPercentage").textContent =
-        percentage(other) + "% of total";
+    if (parts.length === 0) return "U";
+
+    const first = parts[0][0];
+    const last = parts.length > 1 ? parts[parts.length - 1][0] : "";
+
+    return (first + last).toUpperCase();
+
+}
+
+function renderProfile() {
+
+    const saved = getSavedUser();
+    const setup = getSavedSetup();
+
+    const fullName = (data.user && data.user.fullName) || (saved && saved.fullName) || "";
+    const business = (data.user && data.user.businessName) ||
+        (setup && setup.businessName) || "Set up your business";
+
+    document.getElementById("profileName").textContent = fullName || "Your Name";
+    document.getElementById("profileAvatar").textContent = fullName ? getInitials(fullName) : "U";
+    document.getElementById("profileBusiness").textContent = business;
 
 }
 
 
-// CATEGORY ICONS
+// =================================
+// 4. DATA LAYER  (backend developer: edit this section only)
+// =================================
+
+// --- 4a. Local mode (no backend yet) -------------------------------
+
+const localStore = { expenses: [], nextId: 1 };
+
+function buildSummary(expenses) {
+
+    const sum = (category) => expenses
+        .filter((e) => e.category === category)
+        .reduce((total, e) => total + e.amount, 0);
+
+    return {
+        totalAmount: expenses.reduce((total, e) => total + e.amount, 0),
+        changePercent: null,
+        gridAmount: sum("Grid Electricity"),
+        generatorAmount: sum("Generator"),
+        otherAmount: sum("Other")
+    };
+
+}
+
+function localList(range) {
+
+    let list = [...localStore.expenses];
+
+    if (range !== "all") {
+        const days = parseInt(range, 10);
+        const cutoff = new Date();
+        cutoff.setDate(cutoff.getDate() - days);
+        list = list.filter((e) => new Date(e.date + "T00:00:00") >= cutoff);
+    }
+
+    list.sort((a, b) => b.date.localeCompare(a.date));
+
+    const setup = getSavedSetup();
+
+    return {
+        user: null,
+        business: { powerSources: setup && setup.powerSources ? setup.powerSources : [] },
+        summary: buildSummary(list),
+        expenses: list
+    };
+
+}
+
+// --- 4b. Real backend calls ----------------------------------------
+
+// TODO (backend): decide how the login token is stored and sent.
+function authHeaders() {
+
+    const token = localStorage.getItem("powerguardToken");
+
+    return token ? { Authorization: "Bearer " + token } : {};
+
+}
+
+async function request(path, options = {}) {
+
+    const response = await fetch(API_BASE_URL + path, {
+        ...options,
+        headers: { ...authHeaders(), ...(options.headers || {}) }
+    });
+
+    if (!response.ok) {
+
+        let message = "Request failed (" + response.status + ")";
+
+        try {
+            const body = await response.json();
+            if (body.message) message = body.message;
+        } catch (error) { /* no JSON body */ }
+
+        throw new Error(message);
+
+    }
+
+    return response.status === 204 ? null : response.json();
+
+}
+
+const jsonHeaders = { "Content-Type": "application/json" };
+
+// --- 4c. The api object the page uses -------------------------------
+
+const api = {
+
+    // range = "7d" | "30d" | "90d" | "all"
+    async list(range) {
+
+        if (!USE_BACKEND) return localList(range);
+
+        return request(`/api/expenses?range=${range}`);
+
+    },
+
+    // expense = { category, amount, date, description, receiptId? }
+    async create(expense) {
+
+        if (!USE_BACKEND) {
+            localStore.expenses.push({ id: localStore.nextId++, source: "Confirmed", ...expense });
+            return;
+        }
+
+        return request("/api/expenses", {
+            method: "POST",
+            headers: jsonHeaders,
+            body: JSON.stringify(expense)
+        });
+
+    },
+
+    async update(id, expense) {
+
+        if (!USE_BACKEND) {
+            localStore.expenses = localStore.expenses.map((e) =>
+                e.id === id ? { ...e, ...expense } : e);
+            return;
+        }
+
+        return request(`/api/expenses/${id}`, {
+            method: "PUT",
+            headers: jsonHeaders,
+            body: JSON.stringify(expense)
+        });
+
+    },
+
+    async remove(id) {
+
+        if (!USE_BACKEND) {
+            localStore.expenses = localStore.expenses.filter((e) => e.id !== id);
+            return;
+        }
+
+        return request(`/api/expenses/${id}`, { method: "DELETE" });
+
+    },
+
+    // Sends the receipt image to the BACKEND, which calls Gemini.
+    // Never put the Gemini API key in this file - anyone could copy it.
+    // Returns { receiptId, category, amount, date, description }
+    async extractReceipt(file) {
+
+        if (!USE_BACKEND) {
+            throw new Error("Receipt extraction needs the backend (Gemini) to be connected.");
+        }
+
+        const formData = new FormData();
+        formData.append("receipt", file);
+
+        return request("/api/receipts/extract", { method: "POST", body: formData });
+
+    }
+
+};
+
+
+// =================================
+// 5. LOAD DATA
+// =================================
+
+async function loadExpenses() {
+
+    try {
+        data = await api.list(periodFilter.value);
+    } catch (error) {
+        console.error(error);
+        showToast("Could not load your expenses. Please try again.");
+    }
+
+    renderAll();
+
+}
+
+
+// =================================
+// 6. POWER SOURCES  (what this user sees)
+// =================================
+
+function getSources() {
+
+    const sources = (data.business && data.business.powerSources) || [];
+
+    // If setup was never completed we cannot know, so show everything.
+    return sources.length ? sources : ["grid", "generator", "battery"];
+
+}
+
+const CATEGORIES = [
+    { value: "Grid Electricity", label: "Grid Electricity", source: "grid" },
+    { value: "Generator", label: "Generator Fuel", source: "generator" },
+    { value: "Other", label: "Other Expenses", source: null }
+];
+
+function applyPowerSources() {
+
+    const sources = getSources();
+
+    document.querySelectorAll("[data-source]").forEach((element) => {
+        element.hidden = !sources.includes(element.dataset.source);
+    });
+
+    // Let the summary cards fill the row
+    const visible = document.querySelectorAll("#summaryCards .summary-card:not([hidden])").length;
+    document.getElementById("summaryCards").style.setProperty("--cols", visible);
+
+    // Category dropdown: only the user's sources + Other
+    const current = categoryInput.value;
+
+    categoryInput.innerHTML = CATEGORIES
+        .filter((c) => c.source === null || sources.includes(c.source))
+        .map((c) => `<option value="${c.value}">${c.label}</option>`)
+        .join("");
+
+    if ([...categoryInput.options].some((o) => o.value === current)) {
+        categoryInput.value = current;
+    }
+
+    // A filter tab that is now hidden cannot stay selected
+    const activeTab = document.querySelector(`.filter-tab[data-filter="${activeFilter}"]`);
+
+    if (activeTab && activeTab.hidden) {
+        activeFilter = "All";
+        updateActiveTab();
+    }
+
+}
+
+
+// =================================
+// 7. SUMMARY CARDS
+// =================================
+
+function setPercentOfTotal(id, amount, total) {
+
+    const element = document.getElementById(id);
+
+    if (!total) {
+        element.className = "no-data";
+        element.textContent = "No data yet";
+        return;
+    }
+
+    element.className = "";
+    element.textContent = Math.round((amount / total) * 100) + "% of total";
+
+}
+
+function renderSummary() {
+
+    const s = data.summary || {};
+    const total = s.totalAmount || 0;
+
+    document.getElementById("totalExpenses").textContent = formatCurrency(total);
+    document.getElementById("gridTotal").textContent = formatCurrency(s.gridAmount);
+    document.getElementById("generatorTotal").textContent = formatCurrency(s.generatorAmount);
+    document.getElementById("otherTotal").textContent = formatCurrency(s.otherAmount);
+
+    const change = document.getElementById("totalChange");
+
+    if (s.changePercent === null || s.changePercent === undefined) {
+        change.className = "no-data";
+        change.textContent = "No data yet";
+    } else {
+        change.className = "positive";
+        change.textContent =
+            (s.changePercent >= 0 ? "↑ " : "↓ ") + Math.abs(s.changePercent) + "% vs previous period";
+    }
+
+    setPercentOfTotal("gridPercentage", s.gridAmount, total);
+    setPercentOfTotal("generatorPercentage", s.generatorAmount, total);
+    setPercentOfTotal("otherPercentage", s.otherAmount, total);
+
+}
+
+
+// =================================
+// 8. EXPENSE TABLE
+// =================================
 
 function categoryIcon(category) {
 
-    if (category === "Generator") {
-        return "fuel";
-    }
-
-    if (category === "Grid Electricity") {
-        return "tower-control";
-    }
+    if (category === "Generator") return "fuel";
+    if (category === "Grid Electricity") return "tower-control";
 
     return "ellipsis";
 
 }
 
-
-// CATEGORY BADGE CLASS
-
 function categoryClass(category) {
 
-    if (category === "Generator") {
-        return "generator-badge";
-    }
-
-    if (category === "Grid Electricity") {
-        return "grid-badge";
-    }
-
-    return "generator-badge";
+    return category === "Grid Electricity" ? "grid-badge" : "generator-badge";
 
 }
 
+function categoryLabel(category) {
 
-// RENDER EXPENSE TABLE
+    return category === "Generator" ? "Generator" : category;
 
-function renderExpenses() {
+}
 
-    const filteredExpenses = expenses.filter(expense => {
+function getVisibleExpenses() {
 
-        return activeFilter === "All" ||
-            expense.category === activeFilter;
+    return data.expenses.filter((expense) => {
+
+        const matchesFilter = activeFilter === "All" || expense.category === activeFilter;
+
+        const matchesSearch = !searchQuery || [
+            expense.description, expense.category, expense.source,
+            expense.date, String(expense.amount)
+        ].join(" ").toLowerCase().includes(searchQuery);
+
+        return matchesFilter && matchesSearch;
 
     });
 
+}
+
+function renderTable() {
+
+    const matching = getVisibleExpenses();
+
+    const rows = showFullHistory
+        ? matching
+        : matching.slice(0, ROWS_BEFORE_FULL_HISTORY);
 
     expenseTable.innerHTML = "";
 
-
-    if (filteredExpenses.length === 0) {
-
-        emptyState.hidden = false;
-
-    } else {
-
-        emptyState.hidden = true;
-
-    }
-
-
-    filteredExpenses.forEach(expense => {
+    rows.forEach((expense) => {
 
         const row = document.createElement("tr");
 
@@ -271,33 +529,31 @@ function renderExpenses() {
             <td>
                 <span class="category-badge ${categoryClass(expense.category)}">
                     <i data-lucide="${categoryIcon(expense.category)}"></i>
-                    ${expense.category}
+                    ${escapeHTML(categoryLabel(expense.category))}
                 </span>
             </td>
 
-            <td class="amount-cell">
-                ${formatCurrency(expense.amount)}
-            </td>
+            <td class="amount-cell">${formatCurrency(expense.amount)}</td>
 
             <td>
                 <span class="source-badge ${expense.source === "Measured" ? "measured" : "confirmed"}">
                     <i data-lucide="circle"></i>
-                    ${expense.source}
+                    ${escapeHTML(expense.source || "Confirmed")}
                 </span>
             </td>
 
             <td>
                 <div class="actions">
 
-                    <button class="view-btn" data-action="view" data-id="${expense.id}" title="View">
+                    <button class="view-btn" data-action="view" data-id="${escapeHTML(expense.id)}" title="View">
                         <i data-lucide="eye"></i>
                     </button>
 
-                    <button class="edit-btn" data-action="edit" data-id="${expense.id}" title="Edit">
+                    <button class="edit-btn" data-action="edit" data-id="${escapeHTML(expense.id)}" title="Edit">
                         <i data-lucide="pencil"></i>
                     </button>
 
-                    <button class="delete-btn" data-action="delete" data-id="${expense.id}" title="Delete">
+                    <button class="delete-btn" data-action="delete" data-id="${escapeHTML(expense.id)}" title="Delete">
                         <i data-lucide="trash-2"></i>
                     </button>
 
@@ -310,185 +566,203 @@ function renderExpenses() {
 
     });
 
+    // Empty states
+    const title = document.getElementById("emptyTitle");
+    const text = document.getElementById("emptyText");
 
-    updateSummary();
+    if (data.expenses.length === 0) {
+        title.textContent = "No expenses yet";
+        text.textContent = "Add your first expense or upload a receipt to get started.";
+    } else {
+        title.textContent = "No expenses found";
+        text.textContent = "Try a different filter or search.";
+    }
+
+    emptyState.hidden = rows.length > 0;
+
+    // "View Full History" only matters when there are more rows to show
+    document.getElementById("historyBtn").hidden =
+        showFullHistory || matching.length <= ROWS_BEFORE_FULL_HISTORY;
+
     refreshIcons();
 
 }
 
 
-// BASIC HTML ESCAPING FOR USER-ENTERED TEXT
+// =================================
+// 9. RENDER EVERYTHING
+// =================================
 
-function escapeHTML(value) {
+function renderAll() {
 
-    return String(value).replace(/[&<>"']/g, character => {
-
-        const entities = {
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#039;"
-        };
-
-        return entities[character];
-
-    });
+    renderProfile();
+    applyPowerSources();
+    renderSummary();
+    renderTable();
+    refreshIcons();
 
 }
 
 
-// ADD AND EDIT EXPENSES
+// =================================
+// 10. ADD AND EDIT EXPENSES
+// =================================
 
-expenseForm.addEventListener("submit", (event) => {
+function setSaveButton(label) {
+
+    saveBtn.innerHTML = `<i data-lucide="save"></i> ${label}`;
+    refreshIcons();
+
+}
+
+function resetForm() {
+
+    expenseForm.reset();
+    dateInput.value = today();
+
+    editingId = null;
+    receiptId = null;
+
+    setSaveButton("Save Expense");
+
+}
+
+expenseForm.addEventListener("submit", async (event) => {
 
     event.preventDefault();
+
+    if (saving) return;
 
     const amount = Number(amountInput.value);
 
     if (!Number.isFinite(amount) || amount <= 0) {
-
         showToast("Please enter a valid expense amount.");
         return;
-
     }
 
-
     const expenseData = {
-
         date: dateInput.value,
         description: descriptionInput.value.trim() || "Energy expense",
         category: categoryInput.value,
-        amount: amount,
-        source: "Confirmed"
-
+        amount: amount
     };
 
-
-    if (editingId !== null) {
-
-        expenses = expenses.map(expense => {
-
-            if (expense.id === editingId) {
-
-                return {
-                    ...expense,
-                    ...expenseData
-                };
-
-            }
-
-            return expense;
-
-        });
-
-        showToast("Expense updated successfully!");
-
-        editingId = null;
-
-    } else {
-
-        expenses.unshift({
-
-            id: Date.now(),
-            ...expenseData
-
-        });
-
-        showToast("Expense added successfully!");
-
+    if (receiptId) {
+        expenseData.receiptId = receiptId;
     }
 
+    saving = true;
+    saveBtn.disabled = true;
 
-    expenseForm.reset();
+    try {
 
-    dateInput.value = new Date().toISOString().split("T")[0];
+        if (editingId !== null) {
+            await api.update(editingId, expenseData);
+            showToast("Expense updated successfully!");
+        } else {
+            await api.create(expenseData);
+            showToast("Expense added successfully!");
+        }
 
-    document.querySelector(".save-btn").innerHTML =
-        '<i data-lucide="save"></i> Save Expense';
+        resetForm();
+        clearReceipt();
 
-    activeFilter = "All";
+        activeFilter = "All";
+        updateActiveTab();
 
-    updateActiveTab();
-    renderExpenses();
+        await loadExpenses();
+
+    } catch (error) {
+
+        console.error(error);
+        showToast(error.message || "Could not save the expense.");
+
+    } finally {
+
+        saving = false;
+        saveBtn.disabled = false;
+
+    }
 
 });
 
 
-// FILTER TABS
+// =================================
+// 11. FILTER TABS, SEARCH, HISTORY
+// =================================
 
 const filterTabs = document.querySelectorAll(".filter-tab");
 
-
 function updateActiveTab() {
 
-    filterTabs.forEach(tab => {
-
-        tab.classList.toggle(
-            "active",
-            tab.dataset.filter === activeFilter
-        );
-
+    filterTabs.forEach((tab) => {
+        tab.classList.toggle("active", tab.dataset.filter === activeFilter);
     });
 
 }
 
-
-filterTabs.forEach(tab => {
+filterTabs.forEach((tab) => {
 
     tab.addEventListener("click", () => {
 
         activeFilter = tab.dataset.filter;
 
         updateActiveTab();
-        renderExpenses();
+        renderTable();
 
     });
 
 });
 
+searchInput.addEventListener("input", () => {
 
-// TABLE ACTIONS
+    searchQuery = searchInput.value.toLowerCase().trim();
 
-expenseTable.addEventListener("click", (event) => {
+    renderTable();
+
+});
+
+document.getElementById("historyBtn").addEventListener("click", () => {
+
+    showFullHistory = true;
+
+    renderTable();
+
+});
+
+periodFilter.addEventListener("change", () => {
+
+    showFullHistory = false;
+
+    loadExpenses();
+
+});
+
+
+// =================================
+// 12. TABLE ACTIONS (view / edit / delete)
+// =================================
+
+expenseTable.addEventListener("click", async (event) => {
 
     const button = event.target.closest("button[data-action]");
 
     if (!button) return;
 
-    const id = Number(button.dataset.id);
+    const id = button.dataset.id;
 
-    const action = button.dataset.action;
-
-    const expense = expenses.find(e => e.id === id);
+    // ids may be numbers (local mode) or strings (database ids)
+    const expense = data.expenses.find((e) => String(e.id) === id);
 
     if (!expense) return;
 
+    const action = button.dataset.action;
 
-    if (action === "view") {
-
-        viewExpense(expense);
-
-    }
-
-
-    if (action === "edit") {
-
-        editExpense(expense);
-
-    }
-
-
-    if (action === "delete") {
-
-        deleteExpense(id);
-
-    }
+    if (action === "view") viewExpense(expense);
+    if (action === "edit") editExpense(expense);
+    if (action === "delete") await deleteExpense(expense);
 
 });
-
-
-// VIEW EXPENSE
 
 function viewExpense(expense) {
 
@@ -505,7 +779,7 @@ function viewExpense(expense) {
 
             <div>
                 <small>Category</small>
-                <strong>${expense.category}</strong>
+                <strong>${escapeHTML(categoryLabel(expense.category))}</strong>
             </div>
 
             <div>
@@ -520,7 +794,7 @@ function viewExpense(expense) {
 
             <div>
                 <small>Source</small>
-                <strong>${expense.source}</strong>
+                <strong>${escapeHTML(expense.source)}</strong>
             </div>
 
         </div>
@@ -531,22 +805,22 @@ function viewExpense(expense) {
 
 }
 
-
-// EDIT EXPENSE
-
 function editExpense(expense) {
 
     editingId = expense.id;
 
     amountInput.value = expense.amount;
-    categoryInput.value = expense.category;
     dateInput.value = expense.date;
     descriptionInput.value = expense.description;
 
-    document.querySelector(".save-btn").innerHTML =
-        '<i data-lucide="save"></i> Update Expense';
+    // make sure the category exists in the dropdown
+    if (![...categoryInput.options].some((o) => o.value === expense.category)) {
+        categoryInput.add(new Option(categoryLabel(expense.category), expense.category));
+    }
 
-    refreshIcons();
+    categoryInput.value = expense.category;
+
+    setSaveButton("Update Expense");
 
     document.querySelector(".manual-panel").scrollIntoView({
         behavior: "smooth",
@@ -557,121 +831,104 @@ function editExpense(expense) {
 
 }
 
+async function deleteExpense(expense) {
 
-// DELETE EXPENSE
+    if (!window.confirm("Are you sure you want to delete this expense?")) return;
 
-function deleteExpense(id) {
+    try {
 
-    const confirmed = window.confirm(
-        "Are you sure you want to delete this expense?"
-    );
+        await api.remove(expense.id);
 
-    if (!confirmed) return;
+        showToast("Expense deleted successfully.");
 
+        await loadExpenses();
 
-    expenses = expenses.filter(expense => expense.id !== id);
+    } catch (error) {
 
-    renderExpenses();
+        console.error(error);
+        showToast(error.message || "Could not delete the expense.");
 
-    showToast("Expense deleted successfully.");
+    }
 
 }
 
 
-// MODAL CONTROLS
+// =================================
+// 13. MODAL
+// =================================
 
 function closeModal() {
-
     modalOverlay.classList.remove("show");
-
 }
-
 
 modalClose.addEventListener("click", closeModal);
 modalDone.addEventListener("click", closeModal);
 
-
 modalOverlay.addEventListener("click", (event) => {
-
-    if (event.target === modalOverlay) {
-        closeModal();
-    }
-
+    if (event.target === modalOverlay) closeModal();
 });
 
 
-// RECEIPT UPLOAD
+// =================================
+// 14. RECEIPT UPLOAD + GEMINI EXTRACTION
+// =================================
 
 receiptInput.addEventListener("change", () => {
 
     const file = receiptInput.files[0];
 
-    if (!file) return;
-
-    handleReceipt(file);
+    if (file) handleReceipt(file);
 
 });
 
-
 function handleReceipt(file) {
 
-    const allowedTypes = [
-        "image/jpeg",
-        "image/png"
-    ];
-
-    if (!allowedTypes.includes(file.type)) {
-
+    if (!["image/jpeg", "image/png"].includes(file.type)) {
         showToast("Please upload a JPG or PNG image.");
         receiptInput.value = "";
         return;
-
     }
 
     if (file.size > 5 * 1024 * 1024) {
-
         showToast("Receipt image must be smaller than 5MB.");
         receiptInput.value = "";
         return;
-
     }
 
-
     selectedReceipt = file;
+    receiptId = null;
 
     uploadTitle.textContent = "Receipt selected successfully";
-
     fileName.textContent = file.name;
-
     extractBtn.hidden = false;
 
     showToast("Receipt uploaded. Ready for extraction.");
 
 }
 
+function clearReceipt() {
 
-// DRAG AND DROP RECEIPT
+    selectedReceipt = null;
+    receiptInput.value = "";
+
+    uploadTitle.textContent = "Drag and drop your receipt here";
+    fileName.textContent = "Supported formats: JPG, JPEG, PNG";
+    extractBtn.hidden = true;
+
+}
 
 uploadBox.addEventListener("dragover", (event) => {
-
     event.preventDefault();
-
     uploadBox.classList.add("dragover");
-
 });
-
 
 uploadBox.addEventListener("dragleave", () => {
-
     uploadBox.classList.remove("dragover");
-
 });
-
 
 uploadBox.addEventListener("drop", (event) => {
 
     event.preventDefault();
-
     uploadBox.classList.remove("dragover");
 
     const file = event.dataTransfer.files[0];
@@ -679,9 +936,7 @@ uploadBox.addEventListener("drop", (event) => {
     if (file) {
 
         const transfer = new DataTransfer();
-
         transfer.items.add(file);
-
         receiptInput.files = transfer.files;
 
         handleReceipt(file);
@@ -690,79 +945,84 @@ uploadBox.addEventListener("drop", (event) => {
 
 });
 
-
-// GEMINI EXTRACTION PLACEHOLDER
-
-extractBtn.addEventListener("click", () => {
+// The backend reads the receipt with Gemini and returns the details.
+// We put them in the form so the user can REVIEW and CONFIRM before saving.
+extractBtn.addEventListener("click", async () => {
 
     if (!selectedReceipt) {
-
         showToast("Please upload a receipt first.");
         return;
-
     }
 
-    showToast(
-        "Receipt selected! Connect your Gemini backend to extract the details."
-    );
+    extractBtn.disabled = true;
+    extractBtn.textContent = "Reading receipt...";
+
+    try {
+
+        const result = await api.extractReceipt(selectedReceipt);
+
+        receiptId = result.receiptId || null;
+
+        if (result.amount) amountInput.value = result.amount;
+        if (result.date) dateInput.value = result.date;
+        if (result.description) descriptionInput.value = result.description;
+
+        if (result.category &&
+            [...categoryInput.options].some((o) => o.value === result.category)) {
+            categoryInput.value = result.category;
+        }
+
+        showToast("Details extracted. Please review them, then save.");
+
+        document.querySelector(".manual-panel").scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+    } catch (error) {
+
+        console.error(error);
+        showToast(error.message || "Could not read the receipt. Please enter it manually.");
+
+    } finally {
+
+        extractBtn.disabled = false;
+        extractBtn.innerHTML = '<i data-lucide="sparkles"></i> Extract Receipt Information';
+        refreshIcons();
+
+    }
 
 });
 
 
-// DATE FILTER
+// =================================
+// 15. MOBILE SIDEBAR
+// =================================
 
-document.getElementById("periodFilter")
-    .addEventListener("change", (event) => {
+menuBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("open");
+});
 
-        showToast(
-            event.target.value === "all"
-                ? "Showing all available records."
-                : `Selected last ${event.target.value} days. Connect your date filter to the backend.`
-        );
+document.addEventListener("click", (event) => {
 
-    });
+    if (
+        window.innerWidth <= 760 &&
+        sidebar.classList.contains("open") &&
+        !sidebar.contains(event.target) &&
+        !menuBtn.contains(event.target)
+    ) {
+        sidebar.classList.remove("open");
+    }
 
-
-// FULL HISTORY BUTTON
-
-document.getElementById("historyBtn")
-    .addEventListener("click", () => {
-
-        activeFilter = "All";
-
-        updateActiveTab();
-        renderExpenses();
-
-        showToast("Showing all available expense records.");
-
-    });
+});
 
 
-// SEARCH
+// =================================
+// 16. START
+// =================================
 
-document.querySelector(".search-box input")
-    .addEventListener("input", (event) => {
-
-        const query = event.target.value.toLowerCase().trim();
-
-        const rows = expenseTable.querySelectorAll("tr");
-
-        rows.forEach(row => {
-
-            row.style.display =
-                row.textContent.toLowerCase().includes(query)
-                    ? ""
-                    : "none";
-
-        });
-
-    });
-
-
-// INITIALIZE PAGE
-
-dateInput.value = new Date().toISOString().split("T")[0];
-
-renderExpenses();
+dateInput.value = today();
 
 refreshIcons();
+
+loadExpenses();

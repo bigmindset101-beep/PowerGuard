@@ -1392,3 +1392,25 @@ tbody tr:hover {
         padding: 24px 18px;
     }
 }
+/* =====================================================
+   ADD THIS BLOCK TO THE VERY BOTTOM OF expense.css
+   (hides cards/tabs for power sources the user doesn't use,
+    and styles the "No data yet" text)
+===================================================== */
+
+/* lets the JS hide things the user did not choose at setup */
+[hidden] {
+    display: none !important;
+}
+
+/* summary cards fill the row, whether 2, 3 or 4 are visible */
+@media (min-width: 1151px) {
+    .summary-cards {
+        grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
+    }
+}
+
+/* "No data yet" under a card figure */
+.summary-details small.no-data {
+    color: #6f7f75;
+}
