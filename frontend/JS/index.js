@@ -1,3 +1,18 @@
+// update code
+
+
+import {
+  auth,
+  googleProvider,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  updateProfile,
+  sendPasswordResetEmail
+} from "../firebase-config.js";
+
+
+
 // ==============================
 // 1. SELECT ELEMENTS
 // ==============================
@@ -82,7 +97,7 @@ document.querySelectorAll(".toggle-password").forEach(button => {
 // 4. LOGIN FORM SUBMISSION
 // ==============================
 
-document.getElementById("login").addEventListener("submit", function (event) {
+login.addEventListener("submit", async function (event) {
 
     event.preventDefault();
 
@@ -95,7 +110,46 @@ document.getElementById("login").addEventListener("submit", function (event) {
     }
 
     // Backend authentication will be connected here.
-    alert("Login interface working! Connect backend authentication next.");
+    // alert("Login interface working! Connect backend authentication next.");
+
+    const submitButton = login.querySelector('button[type="submit"]')
+
+    submitButton.disabled = true;
+
+    try {
+
+        const userCredential = await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
+
+        const user = userCredential.user;
+
+        console.log("Authenticated user:", user.uid);
+
+            alert(`Welcome back${user.displayName ? ", " + user.displayName : ""}!`);
+
+        // TEMPORARY:
+        // Replace this alert with dashboard navigation
+        // when the dashboard page is ready.
+    } catch (error) {
+
+        console.error("Login error:", error.code, error.message);
+
+        if (error.code === "auth/invalid-credential") {
+            alert("Incorrect email or password.");
+        } else if (error.code === "auth/user-not-found") {
+            alert("No account found with this email.");
+        } else if (error.code === "auth/too-many-requests") {
+            alert("Too many attempts. Please try again later.");
+        } else {
+            alert("Login failed. Please check your details and try again.");
+        }
+    } finally {
+
+        submitButton.disabled = false;
+    }
 
 });
 
@@ -104,12 +158,21 @@ document.getElementById("login").addEventListener("submit", function (event) {
 // 5. SIGNUP FORM SUBMISSION
 // ==============================
 
-document.getElementById("signup").addEventListener("submit", function (event) {
+signup.addEventListener("submit", async function (event) {
 
     event.preventDefault();
 
     const password = document.getElementById("signupPassword").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
+
+    const fullName = document.getElementById("fullName").value.trim();
+    const email = document.getElementById("signupEmail").value.trim();
+
+    if (!fullName || !email || !password || !confirmPassword) {
+        alert("Please complete all fields.");
+        return;
+    }
+
 
     if (password.length < 8) {
         alert("Password must contain at least 8 characters.");
@@ -121,18 +184,51 @@ document.getElementById("signup").addEventListener("submit", function (event) {
         return;
     }
 
-    const fullName = document.getElementById("fullName").value.trim();
-    const email = document.getElementById("signupEmail").value.trim();
+    const submitButton = signup.querySelector('button[type="submit"]');
 
-    // TEMPORARY (no backend yet): remember who signed up so the next pages
-    // can show their name. Never store the password here.
-    // When the backend is ready, replace this with the real signup call.
-    localStorage.setItem(
-        "powerguardUser",
-        JSON.stringify({ fullName: fullName, email: email })
-    );
+    submitButton.disabled = true;
 
-    alert("Registration interface working! Connect backend next.");
+    try {
+
+        const userCredential = await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
+
+        const user = userCredential.user;
+
+        await updateProfile(user, {
+            displayName: fullName
+        });
+
+        console.log("Registered user:", user.uid);
+
+        alert("Account created successfully!");
+
+        // TEMPORARY:
+        // Replace this alert with dashboard navigation
+        // when the dashboard page is ready.
+
+        } catch (error) {
+
+        console.error("Signup error:", error.code, error.message);
+
+        if (error.code === "auth/email-already-in-use") {
+            alert("This email already has an account. Please log in.");
+        } else if (error.code === "auth/invalid-email") {
+            alert("Please enter a valid email address.");
+        } else if (error.code === "auth/weak-password") {
+            alert("Your password is too weak.");
+        } else {
+            alert("Account creation failed. Please try again.");
+        }
+
+    } finally {
+
+        submitButton.disabled = false;
+
+    }
 
 });
 
@@ -141,8 +237,45 @@ document.getElementById("signup").addEventListener("submit", function (event) {
 // 6. GOOGLE SIGN-IN
 // ==============================
 
-document.getElementById("googleLogin").addEventListener("click", function () {
-    alert("Google Sign-In will be activated after Firebase Authentication setup.");
+googleLogin.addEventListener("click", async function () {
+
+    googleLogin.disabled = true;
+
+    try {
+
+        const result = await signInWithPopup(
+            auth,
+            googleProvider
+        );
+
+        const user = result.user;
+
+        console.log("Google authenticated user:", user.uid);
+
+        alert(`Welcome${user.displayName ? ", " + user.displayName : ""}!`);
+
+        // TEMPORARY:
+        // Replace this alert with dashboard navigation
+        // when the dashboard page is ready.
+
+    } catch (error) {
+
+        console.error("Google sign-in error:", error.code, error.message);
+
+        if (error.code === "auth/popup-closed-by-user") {
+            alert("Google sign-in was cancelled.");
+        } else if (error.code === "auth/popup-blocked") {
+            alert("Your browser blocked the Google sign-in popup.");
+        } else {
+            alert("Google sign-in failed. Please try again.");
+        }
+
+    } finally {
+
+        googleLogin.disabled = false;
+
+    }
+   
 });
 
 
@@ -150,7 +283,7 @@ document.getElementById("googleLogin").addEventListener("click", function () {
 // 7. FORGOT PASSWORD
 // ==============================
 
-document.getElementById("forgotPassword").addEventListener("click", function (event) {
+forgotPassword.addEventListener("click", async function (event) {
 
     event.preventDefault();
 
@@ -158,8 +291,28 @@ document.getElementById("forgotPassword").addEventListener("click", function (ev
 
     if (!email) {
         alert("Please enter your email address first.");
-    } else {
-        alert("Password reset will be connected to the backend.");
+        return;
+    }
+
+    try {
+
+        await sendPasswordResetEmail(
+            auth,
+            email
+        );
+
+        alert("Password reset email sent. Check your inbox.");
+
+    } catch (error) {
+
+        console.error("Password reset error:", error.code, error.message);
+
+        if (error.code === "auth/invalid-email") {
+            alert("Please enter a valid email address.");
+        } else {
+            alert("Unable to send password reset email. Please try again.");
+        }
+
     }
 
 });
