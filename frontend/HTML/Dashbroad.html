@@ -1,334 +1,324 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PowerGuard | Overview</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
 
-    <link rel="stylesheet" href="/frontend/CSS/Dashbroad.css">
+    <link rel="stylesheet" href="../CSS/Dashbroad.css" />
     <script src="https://unpkg.com/lucide@latest"></script>
-</head>
+  </head>
 
-<body>
-
-<div class="app">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-
+  <body>
+    <div class="app">
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
         <div class="brand">
-            <div class="logo"><i data-lucide="zap"></i></div>
-            <div>
-                <h2>PowerGuard</h2>
-                <small>Monitor. Compare. Save.</small>
-            </div>
+          <div class="logo"><i data-lucide="zap"></i></div>
+          <div>
+            <h2>PowerGuard</h2>
+            <small>Monitor. Compare. Save.</small>
+          </div>
         </div>
 
         <nav>
-            <a href="Dashbroad.html" class="active"><i data-lucide="house"></i> Overview</a>
-            <a href="Expense.html"><i data-lucide="receipt-text"></i> Expenses</a>
-            <a href="Generator.html"><i data-lucide="zap"></i> Generator</a>
-            <a href="Battery.html"><i data-lucide="battery-charging"></i> Battery</a>
-            <a href="Compare.html"><i data-lucide="scale"></i> Compare</a>
-            <a href="Setting.html"><i data-lucide="settings"></i> Settings</a>
+          <a href="Dashbroad.html" class="active"
+            ><i data-lucide="house"></i> Overview</a
+          >
+          <a href="Expense.html"><i data-lucide="receipt-text"></i> Expenses</a>
+          <a href="Generator.html"><i data-lucide="zap"></i> Generator</a>
+          <a href="Battery.html"
+            ><i data-lucide="battery-charging"></i> Battery</a
+          >
+          <a href="Compare.html"><i data-lucide="scale"></i> Compare</a>
+          <a href="Setting.html"><i data-lucide="settings"></i> Settings</a>
         </nav>
 
         <div class="side-promo">
-            <div class="promo-icon">
-                <i data-lucide="leaf"></i>
-                <i data-lucide="plug-zap"></i>
-            </div>
+          <div class="promo-icon">
+            <i data-lucide="leaf"></i>
+            <i data-lucide="plug-zap"></i>
+          </div>
 
-            <h3>Smarter Energy<br>for a Stronger<br>Business</h3>
+          <h3>Smarter Energy<br />for a Stronger<br />Business</h3>
 
-            <button>Upgrade Plan <i data-lucide="arrow-right"></i></button>
+          <button>Upgrade Plan <i data-lucide="arrow-right"></i></button>
         </div>
 
         <div class="help">
-            <i data-lucide="circle-help"></i>
-            <div>
-                <strong>Need Help?</strong>
-                <small>Get support</small>
-            </div>
+          <i data-lucide="circle-help"></i>
+          <div>
+            <strong>Need Help?</strong>
+            <small>Get support</small>
+          </div>
         </div>
+      </aside>
 
-    </aside>
-
-
-    <!-- MAIN CONTENT -->
-    <main>
-
+      <!-- MAIN CONTENT -->
+      <main>
         <!-- NAVBAR -->
         <header class="navbar">
+          <button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+            <i data-lucide="menu"></i>
+          </button>
 
-            <button class="menu-btn" id="menuBtn" aria-label="Open navigation">
-                <i data-lucide="menu"></i>
+          <div class="search">
+            <i data-lucide="search"></i>
+            <input type="text" placeholder="Search anything..." />
+          </div>
+
+          <div class="profile">
+            <button class="notification" aria-label="Notifications">
+              <i data-lucide="bell"></i>
+              <span></span>
             </button>
 
-            <div class="search">
-                <i data-lucide="search"></i>
-                <input type="text" placeholder="Search anything...">
+            <!-- Filled from the logged-in user -->
+            <div class="avatar" id="profileAvatar">U</div>
+
+            <div class="profile-info">
+              <strong id="profileName">Your Name</strong>
+              <small id="profileBusiness">Set up your business</small>
             </div>
 
-            <div class="profile">
-
-                <button class="notification" aria-label="Notifications">
-                    <i data-lucide="bell"></i>
-                    <span></span>
-                </button>
-
-                <!-- Filled from the logged-in user -->
-                <div class="avatar" id="profileAvatar">U</div>
-
-                <div class="profile-info">
-                    <strong id="profileName">Your Name</strong>
-                    <small id="profileBusiness">Set up your business</small>
-                </div>
-
-                <i data-lucide="chevron-down"></i>
-
-            </div>
-
+            <i data-lucide="chevron-down"></i>
+          </div>
         </header>
-
 
         <!-- DASHBOARD -->
         <div class="content">
-
-            <div class="page-heading">
-                <div>
-                    <h1>Overview</h1>
-                    <p>Your business energy at a glance</p>
-                </div>
-
-                <div class="date-filter">
-                    <i data-lucide="calendar-days"></i>
-                    <select id="dateRange" aria-label="Date range">
-                        <option value="30d">Last 30 Days</option>
-                        <option value="7d">Last 7 Days</option>
-                        <option value="90d">Last 90 Days</option>
-                    </select>
-                </div>
+          <div class="page-heading">
+            <div>
+              <h1>Overview</h1>
+              <p>Your business energy at a glance</p>
             </div>
 
+            <div class="date-filter">
+              <i data-lucide="calendar-days"></i>
+              <select id="dateRange" aria-label="Date range">
+                <option value="30d">Last 30 Days</option>
+                <option value="7d">Last 7 Days</option>
+                <option value="90d">Last 90 Days</option>
+              </select>
+            </div>
+          </div>
 
-            <!-- SUMMARY CARDS
+          <!-- SUMMARY CARDS
                  data-source = the power source that must be chosen on the
                  Business Setup page for the card to appear. -->
-            <section class="metrics" id="metrics">
+          <section class="metrics" id="metrics">
+            <div class="metric" data-card="total">
+              <div class="metric-icon"><i data-lucide="zap"></i></div>
+              <div>
+                <p>Total Energy Expenses</p>
+                <h2 id="totalAmount">₦0</h2>
+                <small id="totalChange" class="no-data">No data yet</small>
+              </div>
+              <i class="watermark" data-lucide="wallet"></i>
+            </div>
 
-                <div class="metric" data-card="total">
-                    <div class="metric-icon"><i data-lucide="zap"></i></div>
-                    <div>
-                        <p>Total Energy Expenses</p>
-                        <h2 id="totalAmount">₦0</h2>
-                        <small id="totalChange" class="no-data">No data yet</small>
-                    </div>
-                    <i class="watermark" data-lucide="wallet"></i>
+            <div class="metric" data-source="generator" data-card="generator">
+              <div class="metric-icon"><i data-lucide="fuel"></i></div>
+              <div>
+                <p>Generator Fuel Cost</p>
+                <h2 id="fuelAmount">₦0</h2>
+                <small id="fuelChange" class="no-data">No data yet</small>
+              </div>
+              <i class="watermark" data-lucide="truck"></i>
+            </div>
+
+            <div class="metric" data-source="grid" data-card="grid">
+              <div class="metric-icon"><i data-lucide="plug"></i></div>
+              <div>
+                <p>Grid Electricity</p>
+                <h2 id="gridAmount">₦0</h2>
+                <small id="gridChange" class="no-data">No data yet</small>
+              </div>
+              <i class="watermark" data-lucide="zap"></i>
+            </div>
+
+            <div class="metric" data-source="battery" data-card="battery">
+              <div class="metric-icon">
+                <i data-lucide="battery-charging"></i>
+              </div>
+              <div>
+                <p>Battery Runtime</p>
+                <h2 id="batteryAmount">—</h2>
+                <small class="estimated">Estimated</small>
+              </div>
+              <i class="watermark" data-lucide="battery-full"></i>
+            </div>
+          </section>
+
+          <!-- CHARTS -->
+          <section class="analytics">
+            <div class="panel trend">
+              <div class="panel-heading">
+                <h3>
+                  <i data-lucide="chart-no-axes-column-increasing"></i> Your
+                  Energy Spending Trend
+                </h3>
+
+                <div class="tabs">
+                  <button class="selected" data-period="weekly">Weekly</button>
+                  <button data-period="monthly">Monthly</button>
+                  <button data-period="yearly">Yearly</button>
+                </div>
+              </div>
+
+              <div class="legend">
+                <span><i class="dot total"></i>Total</span>
+                <span data-source="grid"><i class="dot grid"></i>Grid</span>
+                <span data-source="generator"
+                  ><i class="dot generator"></i>Generator</span
+                >
+              </div>
+
+              <div class="chart">
+                <svg id="chart" viewBox="0 0 760 245">
+                  <g class="gridlines"></g>
+                  <g class="chart-labels"></g>
+
+                  <path class="area" d="" />
+                  <path class="line total-line" d="" />
+                  <path class="line grid-line" d="" />
+                  <path class="line gen-line" d="" />
+
+                  <g class="dots total-dots"></g>
+                  <g class="dots grid-dots"></g>
+                  <g class="dots gen-dots"></g>
+                </svg>
+
+                <div class="empty-overlay" id="chartEmpty" hidden>
+                  No spending recorded yet.<br />
+                  Add your first expense to see your trend.
+                </div>
+              </div>
+            </div>
+
+            <!-- POWER BREAKDOWN -->
+            <div class="panel breakdown">
+              <div class="panel-heading">
+                <h3><i data-lucide="chart-pie"></i> Power Source Breakdown</h3>
+              </div>
+
+              <div class="breakdown-body">
+                <div class="donut" id="donut">
+                  <div>
+                    <strong id="donutTotal">₦0</strong>
+                    <small>Total</small>
+                  </div>
                 </div>
 
-                <div class="metric" data-source="generator" data-card="generator">
-                    <div class="metric-icon"><i data-lucide="fuel"></i></div>
-                    <div>
-                        <p>Generator Fuel Cost</p>
-                        <h2 id="fuelAmount">₦0</h2>
-                        <small id="fuelChange" class="no-data">No data yet</small>
-                    </div>
-                    <i class="watermark" data-lucide="truck"></i>
+                <div class="breakdown-legend">
+                  <div data-source="grid">
+                    <i class="dot dark"></i>
+                    <span
+                      >Grid Electricity<strong id="breakdownGrid"
+                        >₦0 (0%)</strong
+                      ></span
+                    >
+                  </div>
+
+                  <div data-source="generator">
+                    <i class="dot pale"></i>
+                    <span
+                      >Generator<strong id="breakdownGenerator"
+                        >₦0 (0%)</strong
+                      ></span
+                    >
+                  </div>
                 </div>
+              </div>
+            </div>
+          </section>
 
-                <div class="metric" data-source="grid" data-card="grid">
-                    <div class="metric-icon"><i data-lucide="plug"></i></div>
-                    <div>
-                        <p>Grid Electricity</p>
-                        <h2 id="gridAmount">₦0</h2>
-                        <small id="gridChange" class="no-data">No data yet</small>
-                    </div>
-                    <i class="watermark" data-lucide="zap"></i>
-                </div>
+          <!-- LOWER DASHBOARD -->
+          <section class="lower">
+            <!-- RECENT ACTIVITY -->
+            <div class="panel activity">
+              <div class="panel-heading">
+                <h3><i data-lucide="clock-3"></i> Recent Activity</h3>
+                <a href="#">View All →</a>
+              </div>
 
-                <div class="metric" data-source="battery" data-card="battery">
-                    <div class="metric-icon"><i data-lucide="battery-charging"></i></div>
-                    <div>
-                        <p>Battery Runtime</p>
-                        <h2 id="batteryAmount">—</h2>
-                        <small class="estimated">Estimated</small>
-                    </div>
-                    <i class="watermark" data-lucide="battery-full"></i>
-                </div>
+              <div class="timeline" id="activityList" hidden></div>
 
-            </section>
+              <p class="empty-note" id="activityEmpty">
+                No activity yet. Your expenses and sessions will appear here.
+              </p>
+            </div>
 
+            <!-- KEY INSIGHTS -->
+            <div class="panel insights">
+              <div class="panel-heading">
+                <h3><i data-lucide="lightbulb"></i> Key Insights</h3>
+              </div>
 
-            <!-- CHARTS -->
-            <section class="analytics">
+              <div class="insight" data-source="generator">
+                <span><i data-lucide="fuel"></i></span>
+                <p>
+                  <small>Generator Cost per Hour</small>
+                  <strong id="insGenCost">—</strong>
+                </p>
+                <em id="insGenNote" hidden>Based on latest session</em>
+              </div>
 
-                <div class="panel trend">
+              <div class="insight" data-source="battery">
+                <span><i data-lucide="battery-charging"></i></span>
+                <p>
+                  <small>Estimated Battery Runtime</small>
+                  <strong id="insBattery">—</strong>
+                </p>
+                <em id="insBatteryNote" hidden></em>
+              </div>
 
-                    <div class="panel-heading">
-                        <h3><i data-lucide="chart-no-axes-column-increasing"></i> Your Energy Spending Trend</h3>
+              <div class="insight" id="insBestRow">
+                <span><i data-lucide="scale"></i></span>
+                <p>
+                  <small>Best Option for Next Outage</small>
+                  <strong id="insBest">—</strong>
+                </p>
+                <em class="green-tag" id="insBestTag" hidden></em>
+              </div>
+            </div>
 
-                        <div class="tabs">
-                            <button class="selected" data-period="weekly">Weekly</button>
-                            <button data-period="monthly">Monthly</button>
-                            <button data-period="yearly">Yearly</button>
-                        </div>
-                    </div>
+            <!-- PROMO CARD -->
+            <div class="promo-card">
+              <div class="promo-decoration">
+                <i data-lucide="leaf"></i>
+                <i data-lucide="plug-zap"></i>
+              </div>
 
-                    <div class="legend">
-                        <span><i class="dot total"></i>Total</span>
-                        <span data-source="grid"><i class="dot grid"></i>Grid</span>
-                        <span data-source="generator"><i class="dot generator"></i>Generator</span>
-                    </div>
+              <h2>Optimize Your<br />Energy Usage</h2>
 
-                    <div class="chart">
-                        <svg id="chart" viewBox="0 0 760 245">
-                            <g class="gridlines"></g>
-                            <g class="chart-labels"></g>
+              <p>
+                Track expenses, compare options<br />and make smarter decisions.
+              </p>
 
-                            <path class="area" d=""/>
-                            <path class="line total-line" d=""/>
-                            <path class="line grid-line" d=""/>
-                            <path class="line gen-line" d=""/>
+              <button>
+                Go to Calculator <i data-lucide="arrow-right"></i>
+              </button>
+            </div>
+          </section>
 
-                            <g class="dots total-dots"></g>
-                            <g class="dots grid-dots"></g>
-                            <g class="dots gen-dots"></g>
-                        </svg>
-
-                        <div class="empty-overlay" id="chartEmpty" hidden>
-                            No spending recorded yet.<br>
-                            Add your first expense to see your trend.
-                        </div>
-                    </div>
-
-                </div>
-
-
-                <!-- POWER BREAKDOWN -->
-                <div class="panel breakdown">
-
-                    <div class="panel-heading">
-                        <h3><i data-lucide="chart-pie"></i> Power Source Breakdown</h3>
-                    </div>
-
-                    <div class="breakdown-body">
-
-                        <div class="donut" id="donut">
-                            <div>
-                                <strong id="donutTotal">₦0</strong>
-                                <small>Total</small>
-                            </div>
-                        </div>
-
-                        <div class="breakdown-legend">
-                            <div data-source="grid">
-                                <i class="dot dark"></i>
-                                <span>Grid Electricity<strong id="breakdownGrid">₦0 (0%)</strong></span>
-                            </div>
-
-                            <div data-source="generator">
-                                <i class="dot pale"></i>
-                                <span>Generator<strong id="breakdownGenerator">₦0 (0%)</strong></span>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-            </section>
-
-
-            <!-- LOWER DASHBOARD -->
-            <section class="lower">
-
-
-                <!-- RECENT ACTIVITY -->
-                <div class="panel activity">
-
-                    <div class="panel-heading">
-                        <h3><i data-lucide="clock-3"></i> Recent Activity</h3>
-                        <a href="#">View All →</a>
-                    </div>
-
-                    <div class="timeline" id="activityList" hidden></div>
-
-                    <p class="empty-note" id="activityEmpty">
-                        No activity yet. Your expenses and sessions will appear here.
-                    </p>
-
-                </div>
-
-
-                <!-- KEY INSIGHTS -->
-                <div class="panel insights">
-
-                    <div class="panel-heading">
-                        <h3><i data-lucide="lightbulb"></i> Key Insights</h3>
-                    </div>
-
-                    <div class="insight" data-source="generator">
-                        <span><i data-lucide="fuel"></i></span>
-                        <p>
-                            <small>Generator Cost per Hour</small>
-                            <strong id="insGenCost">—</strong>
-                        </p>
-                        <em id="insGenNote" hidden>Based on latest session</em>
-                    </div>
-
-                    <div class="insight" data-source="battery">
-                        <span><i data-lucide="battery-charging"></i></span>
-                        <p>
-                            <small>Estimated Battery Runtime</small>
-                            <strong id="insBattery">—</strong>
-                        </p>
-                        <em id="insBatteryNote" hidden></em>
-                    </div>
-
-                    <div class="insight" id="insBestRow">
-                        <span><i data-lucide="scale"></i></span>
-                        <p>
-                            <small>Best Option for Next Outage</small>
-                            <strong id="insBest">—</strong>
-                        </p>
-                        <em class="green-tag" id="insBestTag" hidden></em>
-                    </div>
-
-                </div>
-
-
-                <!-- PROMO CARD -->
-                <div class="promo-card">
-
-                    <div class="promo-decoration">
-                        <i data-lucide="leaf"></i>
-                        <i data-lucide="plug-zap"></i>
-                    </div>
-
-                    <h2>Optimize Your<br>Energy Usage</h2>
-
-                    <p>Track expenses, compare options<br>and make smarter decisions.</p>
-
-                    <button>Go to Calculator <i data-lucide="arrow-right"></i></button>
-
-                </div>
-
-            </section>
-
-            <!-- Only shown when previewing with ?demo=1 -->
-            <p class="note" id="demoNote" hidden>Sample figures for UI preview only. Remove ?demo=1 from the address to see real data.</p>
-
+          <!-- Only shown when previewing with ?demo=1 -->
+          <p class="note" id="demoNote" hidden>
+            Sample figures for UI preview only. Remove ?demo=1 from the address
+            to see real data.
+          </p>
         </div>
+      </main>
+    </div>
 
-    </main>
+    <div class="toast" id="toast"></div>
 
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script src="/frontend/JS/Dashbroad.js"></script>
-</body>
+    <script src="../JS/Dashbroad.js"></script>
+  </body>
 </html>
