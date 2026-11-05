@@ -10,6 +10,8 @@ import {
   sendPasswordResetEmail,
 } from "../firebase-config.js";
 
+import { getAdditionalUserInfo } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
 // ==============================
 // 1. SELECT ELEMENTS
 // ==============================
@@ -116,6 +118,8 @@ login.addEventListener("submit", async function (event) {
 
     console.log("Authenticated user:", user.uid);
 
+    localStorage.setItem("powerguardUser", JSON.stringify({ fullName: user.displayName || "", email: user.email }));
+
     window.location.href = "../HTML/dashbroad.html";
   } catch (error) {
     console.error("Login error:", error.code, error.message);
@@ -179,6 +183,8 @@ signup.addEventListener("submit", async function (event) {
       displayName: fullName,
     });
 
+    localStorage.setItem("powerguardUser", JSON.stringify({ fullName: fullName, email: user.email }));
+
     console.log("Registered user:", user.uid);
 
     window.location.href = "../HTML/BussinessSetup.html";
@@ -210,16 +216,17 @@ googleLogin.addEventListener("click", async function () {
   googleLogin.disabled = true;
 
   try {
-    const result = await signInWithPopup(auth, googleProvider);
-
-    const user = result.user;
 
     console.log("Google authenticated user:", user.uid);
 
-    window.location.href = "../HTML/BussinessSetup.html";
-    // TEMPORARY:
-    // Replace this alert with dashboard navigation
-    // when the dashboard page is ready.
+    localStorage.setItem("powerguardUser", JSON.stringify({ fullName: user.displayName || "", email: user.email }));
+
+    const info = getAdditionalUserInfo(result);
+
+    window.location.href = info && info.isNewUser
+      ? "BussinessSetup.html"
+      : "Dashbroad.html";
+
   } catch (error) {
     console.error("Google sign-in error:", error.code, error.message);
 
