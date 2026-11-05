@@ -181,7 +181,7 @@ signup.addEventListener("submit", async function (event) {
 
     console.log("Registered user:", user.uid);
 
-    window.location.href = "../HTML/dashbroad.html";
+    window.location.href = "../HTML/BussinessSetup.html";
     // TEMPORARY:
     // Replace this alert with dashboard navigation
     // when the dashboard page is ready.
@@ -216,7 +216,7 @@ googleLogin.addEventListener("click", async function () {
 
     console.log("Google authenticated user:", user.uid);
 
-    window.location.href = "../HTML/dashbroad.html";
+    window.location.href = "../HTML/BussinessSetup.html";
     // TEMPORARY:
     // Replace this alert with dashboard navigation
     // when the dashboard page is ready.

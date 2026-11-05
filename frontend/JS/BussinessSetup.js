@@ -252,13 +252,20 @@ form.addEventListener("submit", (event) => {
         JSON.stringify(setupData)
     );
 
-    profileBusiness.textContent = businessName;
+       profileBusiness.textContent = businessName;
 
-    showToast("Business details saved! Ready for the next step.");
+    showToast("Business details saved! Taking you to your dashboard...");
 
     console.log("PowerGuard Business Setup:", setupData);
 
+    // Wait 1 second so the user can see the message, then go to the dashboard
+    window.setTimeout(() => {
+        window.location.href = "Dashbroad.html";
+    }, 1000);
+
 });
+
+
 
 
 // ==========================================
