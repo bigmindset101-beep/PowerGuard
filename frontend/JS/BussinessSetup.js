@@ -16,6 +16,8 @@ const profileAvatar = document.getElementById("profileAvatar");
 const profileBusiness = document.getElementById("profileBusiness");
 const businessNameInput = document.getElementById("businessName");
 
+const API_BASE = "http://127.0.0.1:8000";
+
 
 // ==========================================
 // 2. USER PROFILE (name + initials)
@@ -173,6 +175,10 @@ function clearErrors() {
 
     document.getElementById("powerError").textContent = "";
 
+    document.getElementById("hoursPerDayError").textContent = "";
+
+    document.getElementById("daysPerMonthError").textContent = "";
+
 }
 
 
@@ -180,7 +186,7 @@ function clearErrors() {
 // 6. HANDLE FORM SUBMISSION
 // ==========================================
 
-form.addEventListener("submit", (event) => {
+form.addEventListener("submit", async (event) => {
 
     event.preventDefault();
 
@@ -195,6 +201,9 @@ form.addEventListener("submit", (event) => {
     const location = document
         .getElementById("location")
         .value.trim();
+
+        const hoursPerDay = parseFloat(document.getElementById("hoursPerDay").value);
+        const daysPerMonth = parseFloat(document.getElementById("daysPerMonth").value);
 
     let valid = true;
 
@@ -211,6 +220,24 @@ form.addEventListener("submit", (event) => {
 
         document.getElementById("businessCategoryError").textContent =
             "Please select a business category.";
+
+        valid = false;
+
+    }
+
+        if (!(hoursPerDay > 0 && hoursPerDay <= 24)) {
+
+        document.getElementById("hoursPerDayError").textContent =
+            "Enter hours between 1 and 24.";
+
+        valid = false;
+
+    }
+
+    if (!(daysPerMonth > 0 && daysPerMonth <= 31)) {
+
+        document.getElementById("daysPerMonthError").textContent =
+            "Enter days between 1 and 31.";
 
         valid = false;
 
@@ -251,6 +278,41 @@ form.addEventListener("submit", (event) => {
         "powerguardBusinessSetup",
         JSON.stringify(setupData)
     );
+
+        const submitButton = form.querySelector('button[type="submit"]');
+
+    submitButton.disabled = true;
+
+    try {
+
+        const response = await fetch(`${API_BASE}/api/v1/business`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: businessName,
+                type: businessCategory,
+                location: location,
+                power_sources: [...selectedSources],
+                operating_hours_per_day: hoursPerDay,
+                operating_days_per_month: daysPerMonth
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("API returned status " + response.status);
+        }
+
+    } catch (error) {
+
+        console.error("Could not save business profile:", error);
+
+        showToast("Could not save to the server. Is the API running?");
+
+        submitButton.disabled = false;
+
+        return;
+
+    }
 
        profileBusiness.textContent = businessName;
 
