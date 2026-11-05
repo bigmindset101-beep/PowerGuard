@@ -106,6 +106,16 @@
                 <label for="location">Location <span>(Optional)</span></label>
                 <div class="input-wrap"><i data-lucide="map-pin"></i><input id="location" name="location" type="text" placeholder="e.g. Awka, Anambra State"></div>
               </div>
+              <div class="field">
+                <label for="hoursPerDay">Operating Hours per Day <b>*</b></label>
+                <div class="input-wrap"><i data-lucide="clock"></i><input id="hoursPerDay" name="hoursPerDay" type="number" min="1" max="24" step="0.5" placeholder="e.g. 10" required></div>
+                <small class="field-error" id="hoursPerDayError"></small>
+              </div>
+              <div class="field">
+                <label for="daysPerMonth">Operating Days per Month <b>*</b></label>
+                <div class="input-wrap"><i data-lucide="calendar-days"></i><input id="daysPerMonth" name="daysPerMonth" type="number" min="1" max="31" step="1" placeholder="e.g. 26" required></div>
+                <small class="field-error" id="daysPerMonthError"></small>
+              </div>
             </div>
           </section>
 
